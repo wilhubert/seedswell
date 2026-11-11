@@ -1,0 +1,1 @@
+Everything not in DEC1.md. Parked ideas go here, never into code before Dec 1.

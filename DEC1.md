@@ -1,0 +1,1 @@
+Shipped = a stranger can register with GitHub, create a project with a target date, connect their repo via webhook, and see commits and a ticking day/30 counter on a public board."
