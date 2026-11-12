@@ -1,5 +1,6 @@
 import SeedRow from "@/components/SeedRow";
-import { counterLabel, getBoardSeeds } from "@/lib/seeds";
+import { counterLabel } from "@/lib/board";
+import { getBoardSeeds } from "@/lib/seeds";
 import "./landing.css";
 
 export const dynamic = "force-dynamic";
