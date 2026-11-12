@@ -1,0 +1,42 @@
+.hero {
+  text-align: center;
+  padding: 170px 24px 0;
+}
+
+.hero h1 {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.hero__sub {
+  margin-top: 14px;
+  font-size: 20px;
+  color: var(--muted);
+}
+
+.btn--join {
+  height: 52px;
+  margin-top: 48px;
+  border: none;
+  border-radius: 10px;
+  background: var(--blue);
+  padding: 0 62px;
+  font-size: 20px;
+}
+
+.board {
+  max-width: 1016px;
+  margin: 210px auto 120px;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
+.board__empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 20px;
+  padding: 40px 0;
+}

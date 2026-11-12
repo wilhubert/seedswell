@@ -1,0 +1,80 @@
+.profile-grid {
+  max-width: 1235px;
+  margin: 70px auto 0;
+  padding: 0 45px 120px;
+  display: grid;
+  grid-template-columns: 493px 508px;
+  gap: 100px;
+  align-items: start;
+}
+
+.profile-card {
+  background: var(--card);
+  border: 0.5px solid var(--line);
+  border-radius: 20px;
+  padding: 37px;
+}
+
+.profile-card__avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--panel-deep);
+}
+
+.profile-card__name {
+  margin-top: 16px;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.profile-card__bio {
+  margin-top: 14px;
+  font-size: 20px;
+  line-height: 26px;
+}
+
+.profile-card__links {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+}
+
+.btn--github {
+  height: 37px;
+  border-radius: 4.9px;
+  background: #000;
+  color: var(--ink);
+}
+
+.seeds-col {
+  display: flex;
+  flex-direction: column;
+  gap: 39px;
+}
+
+.seeds-col__head {
+  display: flex;
+  align-items: center;
+  height: 51px;
+  padding: 0 14px;
+  background: var(--panel);
+  border: 0.5px solid var(--line);
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.plant-seed {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--blue-light);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  font-weight: 400;
+  margin: 12px auto 0;
+}
