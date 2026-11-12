@@ -75,6 +75,18 @@ a {
   background: var(--blue-light);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-user {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
 .seed-row {
   display: flex;
   align-items: center;
