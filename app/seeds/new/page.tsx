@@ -21,7 +21,7 @@ export default async function NewSeedPage({
   const params = await searchParams;
   const errorMessage =
     params.error === "invalid"
-      ? "That did not take — a name and a target of 1–366 days are required, and the logo must be an http(s) URL."
+      ? "That did not take — a name (max 80 chars), a target of 1–30 days, and an http(s) logo URL if you provide one."
       : params.error === "insert"
         ? `Planting failed in the database: ${
             Array.isArray(params.message) ? params.message[0] : params.message
@@ -46,13 +46,13 @@ export default async function NewSeedPage({
           <input name="logo_url" type="url" placeholder="https://…" />
         </label>
         <label>
-          Target days
+          Target days (1–30; a 7-day seed is the classic dare)
           <input
             name="target_days"
             type="number"
             min={1}
-            max={366}
-            defaultValue={30}
+            max={30}
+            defaultValue={7}
             required
           />
         </label>

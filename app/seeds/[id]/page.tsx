@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import SeedRow from "@/components/SeedRow";
 import { counterLabel } from "@/lib/board";
 import { getSeedWithLog } from "@/lib/seeds";
+import { getOwnWebhookSecret } from "@/lib/secrets";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import "./seed.css";
 
@@ -27,19 +28,11 @@ export default async function SeedPage({
   } = await supabase.auth.getUser();
   const isOwner = !!user && user.id === seed.userId;
 
-  let webhookSecret: string | null = null;
-  if (isOwner && !seed.connectedAt) {
-    const { data, error } = await supabase.rpc("get_own_webhook_secret", {
-      p_project_id: seed.id,
-    });
-    if (error) {
-      throw new Error(`Webhook secret lookup failed: ${error.message}`);
-    }
-    webhookSecret = (data as string | null) ?? null;
-    if (!webhookSecret) {
-      throw new Error(`No webhook secret found for seed ${seed.id}`);
-    }
-  }
+  // Setup instructions exist only for the owner of a not-yet-connected seed.
+  const needsSetup = isOwner && !seed.connectedAt;
+  const webhookSecret = needsSetup
+    ? await getOwnWebhookSecret(seed.id)
+    : null;
 
   return (
     <main>
@@ -91,8 +84,10 @@ export default async function SeedPage({
             <div className="setup">
               <h2>Connect your repo</h2>
               {seed.connectedAt ? (
-                <p className="setup__done">Webhook connected. Push to fill the log.</p>
-              ) : (
+                <p className="setup__done">
+                  Webhook connected. Push to fill the log.
+                </p>
+              ) : webhookSecret ? (
                 <>
                   <p className="setup__steps">
                     Your repo → Settings → Webhooks → Add webhook:
@@ -116,7 +111,7 @@ export default async function SeedPage({
                     </dd>
                   </dl>
                 </>
-              )}
+              ) : null}
             </div>
           )}
         </section>

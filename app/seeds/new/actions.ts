@@ -4,6 +4,9 @@ import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 
+const NAME_MAX = 80;
+const TAGLINE_MAX = 200;
+
 export async function plantSeed(formData: FormData) {
   const supabase = await createSupabaseServerClient();
   const {
@@ -13,23 +16,19 @@ export async function plantSeed(formData: FormData) {
     redirect("/auth/login");
   }
 
-  const name = String(formData.get("name") ?? "")
-    .trim()
-    .slice(0, 80);
-  const tagline = String(formData.get("tagline") ?? "")
-    .trim()
-    .slice(0, 200);
-  const logoUrl = String(formData.get("logo_url") ?? "")
-    .trim()
-    .slice(0, 500);
-  const targetDaysRaw = Number(formData.get("target_days"));
-  const targetDays = Number.isInteger(targetDaysRaw)
-    ? Math.min(Math.max(targetDaysRaw, 1), 366)
-    : null;
+  const name = String(formData.get("name") ?? "").trim();
+  const tagline = String(formData.get("tagline") ?? "").trim();
+  const logoUrl = String(formData.get("logo_url") ?? "").trim();
+  const targetDays = Number(formData.get("target_days"));
 
-  const nameOk = name.length > 0;
-  const logoOk = logoUrl === "" || /^https?:\/\//.test(logoUrl);
-  if (!nameOk || !targetDays || !logoOk) {
+  const nameOk = name.length >= 1 && name.length <= NAME_MAX;
+  const taglineOk = tagline.length <= TAGLINE_MAX;
+  const hasLogo = logoUrl !== "";
+  const logoOk = !hasLogo || /^https?:\/\//.test(logoUrl);
+  const daysOk =
+    Number.isInteger(targetDays) && targetDays >= 1 && targetDays <= 30;
+
+  if (!nameOk || !taglineOk || !logoOk || !daysOk) {
     redirect("/seeds/new?error=invalid");
   }
 
@@ -49,7 +48,9 @@ export async function plantSeed(formData: FormData) {
     .single();
 
   if (error || !data) {
-    redirect(`/seeds/new?error=insert&message=${encodeURIComponent(error?.message ?? "unknown")}`);
+    redirect(
+      `/seeds/new?error=insert&message=${encodeURIComponent(error?.message ?? "unknown")}`
+    );
   }
 
   redirect(`/seeds/${data.id}`);
