@@ -11,13 +11,14 @@ export default async function Home() {
   return (
     <main>
       <section className="hero">
-        <h1>Plant a seed. Call a date. Ship in public.</h1>
+        <h1>Fresh swell! New ideas seeded today.</h1>
         <p className="hero__sub">
-          A public countdown board for people building software.
+        Launch in front of users from day one. Be there when the next big thing pops up. 🏄
         </p>
         <a className="btn btn--join" href="/seeds/new">
           Join the swell
         </a>
+        <p className="promo">The first 100 seeds are free!</p>
       </section>
       <section className="board">
         {seeds.length === 0 ? (
