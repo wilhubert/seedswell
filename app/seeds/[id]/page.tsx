@@ -69,12 +69,6 @@ export default async function SeedPage({
                   <p className="build-item__meta">
                     {commit.author ?? "unknown"} ·{" "}
                     {commit.committedAt.toISOString().slice(0, 10)}
-                    {commit.url && (
-                      <>
-                        {" · "}
-                        <a href={commit.url}>view</a>
-                      </>
-                    )}
                   </p>
                 </li>
               ))}

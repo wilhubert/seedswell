@@ -9,6 +9,10 @@ export type Commit = {
   committedAt: Date;
 };
 
+// Every seed query embeds its owning profile for the row display.
+const SEED_SELECT =
+  "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, cancelled_at, ship_days, connected_at, profiles(username, avatar_url)";
+
 function mapProfileAndSeed(row: Record<string, unknown>): Seed {
   const profiles = row.profiles as
     | { username: string; avatar_url: string | null }[]
@@ -42,14 +46,46 @@ function mapProfileAndSeed(row: Record<string, unknown>): Seed {
 export async function getBoardSeeds(): Promise<Seed[]> {
   const { data, error } = await getSupabase()
     .from("projects")
-    .select(
-      "id, user_id, name, logo_url, planted_at, target_days, push_count, shipped_at, cancelled_at, ship_days, connected_at, profiles(username, avatar_url)"
-    )
-    .is("cancelled_at", null)
+    .select(SEED_SELECT)
     .order("planted_at", { ascending: false });
 
   if (error) {
     throw new Error(`Board query failed: ${error.message}`);
+  }
+
+  return boardOrder(data.map(mapProfileAndSeed));
+}
+
+export async function getProfileByUsername(username: string) {
+  const { data, error } = await getSupabase()
+    .from("profiles")
+    .select("id, username, avatar_url, bio")
+    .eq("username", username)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Profile query failed: ${error.message}`);
+  }
+  if (!data) {
+    return null;
+  }
+  return {
+    id: data.id,
+    username: data.username,
+    avatarUrl: data.avatar_url,
+    bio: data.bio,
+  };
+}
+
+export async function getSeedsForUser(userId: string): Promise<Seed[]> {
+  const { data, error } = await getSupabase()
+    .from("projects")
+    .select(SEED_SELECT)
+    .eq("user_id", userId)
+    .order("planted_at", { ascending: false });
+
+  if (error) {
+    throw new Error(`User seeds query failed: ${error.message}`);
   }
 
   return boardOrder(data.map(mapProfileAndSeed));

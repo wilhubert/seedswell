@@ -20,6 +20,7 @@
   height: 96px;
   border-radius: 50%;
   background: var(--panel-deep);
+  object-fit: cover;
 }
 
 .profile-card__name {
@@ -63,6 +64,13 @@
   border-radius: 10px;
   font-size: 20px;
   font-weight: 800;
+}
+
+.seeds-col__empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 16px;
+  padding: 24px 0;
 }
 
 .plant-seed {
