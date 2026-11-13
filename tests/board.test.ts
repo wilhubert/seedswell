@@ -8,7 +8,9 @@ const DAY_MS = 86_400_000;
 function makeSeed(overrides: Partial<Seed>): Seed {
   return {
     id: "x",
+    userId: "user",
     name: "Seed",
+    tagline: null,
     owner: "wil",
     avatarUrl: null,
     logoUrl: null,
@@ -18,6 +20,7 @@ function makeSeed(overrides: Partial<Seed>): Seed {
     shippedAt: null,
     cancelledAt: null,
     shipDays: null,
+    connectedAt: null,
     ...overrides,
   };
 }

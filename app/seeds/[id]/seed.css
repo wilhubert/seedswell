@@ -77,3 +77,51 @@
   color: var(--muted);
   font-size: 14px;
 }
+
+.build-log__empty {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.setup h2 {
+  margin-top: 44px;
+  padding-top: 24px;
+  border-top: 1px solid var(--panel-deep);
+}
+
+.setup__steps {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.setup__fields {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px 16px;
+  font-size: 15px;
+}
+
+.setup__fields dt {
+  color: var(--muted);
+}
+
+.setup__fields dd {
+  overflow-wrap: anywhere;
+}
+
+.setup__fields code {
+  background: var(--panel-deep);
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 13px;
+}
+
+.setup__done {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 15px;
+}

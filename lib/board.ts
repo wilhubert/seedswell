@@ -1,6 +1,8 @@
 export type Seed = {
   id: string;
+  userId: string;
   name: string;
+  tagline: string | null;
   owner: string;
   avatarUrl: string | null;
   logoUrl: string | null;
@@ -10,6 +12,7 @@ export type Seed = {
   shippedAt: Date | null;
   cancelledAt: Date | null;
   shipDays: number | null;
+  connectedAt: Date | null;
 };
 
 const DAY_MS = 86_400_000;
