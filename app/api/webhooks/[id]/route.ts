@@ -110,9 +110,17 @@ export async function POST(
       }
     }
 
+    // Mark connected on first push as well: a webhook added before its ping
+    // was deliverable must not stay "unconnected" forever.
+    const updates: Record<string, unknown> = {
+      push_count: project.push_count + 1,
+    };
+    if (!project.connected_at) {
+      updates.connected_at = new Date().toISOString();
+    }
     const { error } = await service
       .from("projects")
-      .update({ push_count: project.push_count + 1 })
+      .update(updates)
       .eq("id", id);
     if (error) {
       return NextResponse.json(
