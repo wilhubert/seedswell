@@ -4,7 +4,7 @@ import { counterLabel } from "@/lib/board";
 import { getSeedWithLog } from "@/lib/seeds";
 import { getOwnWebhookSecret } from "@/lib/secrets";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { cancelSeed, shipSeed } from "./actions";
+import { shipSeed } from "./actions";
 import "./seed.css";
 
 export const dynamic = "force-dynamic";
@@ -13,13 +13,9 @@ const WEBHOOK_URL_BASE = "https://seedswell.vercel.app/api/webhooks";
 
 const ERROR_MESSAGES: Record<string, string> = {
   lookup: "Could not find that seed.",
-  "not-owner": "Only the owner can conclude this seed.",
-  "already-concluded":
-    "This seed is already shipped or called off — the book is closed.",
+  "not-owner": "Only the owner can ship this seed.",
+  "already-shipped": "This seed is already shipped — the book is closed.",
   "ship-failed": "Marking shipped failed.",
-  "cancel-failed": "Calling it off failed.",
-  "note-invalid":
-    "The honesty note is required, up to 500 characters — say why.",
 };
 
 export default async function SeedPage({
@@ -52,7 +48,7 @@ export default async function SeedPage({
     ? await getOwnWebhookSecret(seed.id)
     : null;
 
-  const betOpen = isOwner && !seed.shippedAt && !seed.cancelledAt;
+  const betOpen = isOwner && !seed.shippedAt;
 
   return (
     <main>
@@ -95,12 +91,6 @@ export default async function SeedPage({
               ))}
             </ol>
           )}
-          {seed.cancelNote && (
-            <>
-              <h2>Called off</h2>
-              <p className="project-story seed-cancel-note">{seed.cancelNote}</p>
-            </>
-          )}
           {betOpen && (
             <div className="bet">
               <h2>Your bet</h2>
@@ -109,18 +99,6 @@ export default async function SeedPage({
                   <input type="hidden" name="project_id" value={seed.id} />
                   <button className="btn btn--ship" type="submit">
                     Ship it
-                  </button>
-                </form>
-                <form action={cancelSeed} className="bet__cancel">
-                  <input type="hidden" name="project_id" value={seed.id} />
-                  <textarea
-                    name="note"
-                    required
-                    maxLength={500}
-                    placeholder="Why you called it off — the public honesty note"
-                  />
-                  <button className="btn" type="submit">
-                    Call it off
                   </button>
                 </form>
               </div>

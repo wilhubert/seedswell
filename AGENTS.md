@@ -1,6 +1,6 @@
 # AGENTS.md — Seedswell standing orders
 
-You are working on **Seedswell**: a public countdown board for people building software. Plant a seed, call a date, ship in public — or cancel it, honestly. The thesis: AI made starting easy and finishing hard; the missing ingredient is a deadline other people can see.
+You are working on **Seedswell**: a public countdown board for people building software. Plant a seed, call a date, ship in public. The thesis: AI made starting easy and finishing hard; the missing ingredient is a deadline other people can see.
 
 **Status:** building. Called Nov 11, shipping **Dec 1**. This repo is Seedswell's own seed — its commit history is the first build log.
 
@@ -29,10 +29,10 @@ Nothing outside that sentence gets built before Dec 1. If the user asks for some
 ## Data model (already decided — follow it)
 
 - `profiles`: `id` (uuid, matches auth user), `username`, `avatar_url`, `bio`, `created_at`. Seeded on first GitHub sign-in.
-- `projects`: `id`, `user_id`, `name`, `tagline`, `planted_at`, `target_days`, `shipped_at`, `cancelled_at`, `ship_days`, `webhook_secret`, `connected_at`, `push_count`. No origin/status fields beyond these; the `day N/30 · X to go` counter is **computed client-side** from `planted_at + target_days`, never stored.
+- `projects`: `id`, `user_id`, `name`, `tagline`, `planted_at`, `target_days`, `shipped_at`, `ship_days`, `webhook_secret`, `connected_at`, `push_count`. No origin/status fields beyond these; the `day N/30 · X to go` counter is **computed client-side** from `planted_at + target_days`, never stored.
 - `commits` (build log): `sha` (unique with project), `project_id`, `message`, `author`, `url`, `committed_at`, `pushed_at`.
 
-Shipped = `shipped_at` set (with `ship_days` for the receipt). Called off = `cancelled_at` set, with a public honesty note. Both are user actions; the system never auto-closes anything.
+Shipped = `shipped_at` set (with `ship_days` for the receipt). It is a user action; the system never auto-closes anything. (Called off with honesty note was removed Nov 14; idle dormancy is parked in `IDEAS.md`.)
 
 ## Working rules
 

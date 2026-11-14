@@ -18,10 +18,8 @@ function makeSeed(overrides: Partial<Seed>): Seed {
     targetDays: 30,
     pushCount: 0,
     shippedAt: null,
-    cancelledAt: null,
     shipDays: null,
     connectedAt: null,
-    cancelNote: null,
     ...overrides,
   };
 }
@@ -52,11 +50,6 @@ test("counter shows the ship receipt", () => {
     shipDays: 22,
   });
   assert.equal(counterLabel(seed), "shipped · 22 days");
-});
-
-test("counter shows a called-off seed", () => {
-  const seed = makeSeed({ cancelledAt: new Date(Date.now() - DAY_MS) });
-  assert.equal(counterLabel(seed), "called off");
 });
 
 test("board orders live seeds by soonest deadline", () => {
@@ -115,13 +108,4 @@ test("board keeps a shipped seed under the live ones until its date", () => {
     "live",
     "shipped",
   ]);
-});
-
-test("board drops a called-off seed even inside its window", () => {
-  const cancelled = makeSeed({
-    id: "cancelled",
-    cancelledAt: new Date(Date.now() - DAY_MS),
-  });
-  const live = makeSeed({ id: "live" });
-  assert.deepEqual(boardOrder([cancelled, live]).map((s) => s.id), ["live"]);
 });

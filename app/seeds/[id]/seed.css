@@ -90,11 +90,6 @@
   font-size: 15px;
 }
 
-.seed-cancel-note {
-  color: var(--muted);
-  font-style: italic;
-}
-
 .bet h2 {
   margin-top: 44px;
   padding-top: 24px;
@@ -106,26 +101,6 @@
   display: flex;
   gap: 20px;
   align-items: flex-start;
-}
-
-.bet__cancel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.bet__cancel textarea {
-  height: 70px;
-  border-radius: 10px;
-  border: 0.5px solid var(--line);
-  background: var(--panel-deep);
-  color: var(--ink);
-  padding: 10px 12px;
-  font-family: inherit;
-  font-weight: 400;
-  font-size: 15px;
-  resize: vertical;
 }
 
 .btn--ship {

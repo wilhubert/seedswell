@@ -17,7 +17,7 @@ async function requireOwnOpenSeed(projectId: string) {
 
   const { data: project, error } = await supabase
     .from("projects")
-    .select("id, user_id, planted_at, shipped_at, cancelled_at")
+    .select("id, user_id, planted_at, shipped_at")
     .eq("id", projectId)
     .maybeSingle();
 
@@ -27,8 +27,8 @@ async function requireOwnOpenSeed(projectId: string) {
   if (project.user_id !== user.id) {
     redirect(`/seeds/${projectId}?error=not-owner`);
   }
-  if (project.shipped_at || project.cancelled_at) {
-    redirect(`/seeds/${projectId}?error=already-concluded`);
+  if (project.shipped_at) {
+    redirect(`/seeds/${projectId}?error=already-shipped`);
   }
 
   return { supabase, project };
@@ -51,32 +51,6 @@ export async function shipSeed(formData: FormData) {
   if (error) {
     redirect(
       `/seeds/${projectId}?error=ship-failed&message=${encodeURIComponent(error.message)}`
-    );
-  }
-
-  revalidatePath(`/seeds/${projectId}`);
-  redirect(`/seeds/${projectId}`);
-}
-
-export async function cancelSeed(formData: FormData) {
-  const projectId = String(formData.get("project_id") ?? "");
-  const note = String(formData.get("note") ?? "").trim();
-  const { supabase } = await requireOwnOpenSeed(projectId);
-
-  if (note.length < 1 || note.length > 500) {
-    redirect(`/seeds/${projectId}?error=note-invalid`);
-  }
-
-  const { error } = await supabase
-    .from("projects")
-    .update({
-      cancelled_at: new Date().toISOString(),
-      cancel_note: note,
-    })
-    .eq("id", projectId);
-  if (error) {
-    redirect(
-      `/seeds/${projectId}?error=cancel-failed&message=${encodeURIComponent(error.message)}`
     );
   }
 

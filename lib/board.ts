@@ -10,10 +10,8 @@ export type Seed = {
   targetDays: number;
   pushCount: number;
   shippedAt: Date | null;
-  cancelledAt: Date | null;
   shipDays: number | null;
   connectedAt: Date | null;
-  cancelNote: string | null;
 };
 
 const DAY_MS = 86_400_000;
@@ -22,9 +20,6 @@ const DAY_MS = 86_400_000;
 export function counterLabel(seed: Seed): string {
   if (seed.shippedAt) {
     return `shipped · ${seed.shipDays} days`;
-  }
-  if (seed.cancelledAt) {
-    return "called off";
   }
   const day = Math.floor((Date.now() - seed.plantedAt.getTime()) / DAY_MS) + 1;
   const remainingMs =
@@ -38,16 +33,13 @@ export function counterLabel(seed: Seed): string {
 
 // Board rule: live seeds sort nearest their called date first; a seed
 // vanishes once its date passes, shipped or not; a shipped seed still inside
-// its window lingers under the live ones with its receipt; called-off seeds
-// are gone.
+// its window lingers under the live ones with its receipt.
 export function boardOrder(seeds: Seed[]): Seed[] {
   const now = Date.now();
   const deadline = (seed: Seed) =>
     seed.plantedAt.getTime() + seed.targetDays * DAY_MS;
 
-  const visible = seeds.filter(
-    (seed) => !seed.cancelledAt && deadline(seed) > now
-  );
+  const visible = seeds.filter((seed) => deadline(seed) > now);
   const live = visible
     .filter((seed) => !seed.shippedAt)
     .sort((a, b) => deadline(a) - deadline(b));
