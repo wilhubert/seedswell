@@ -9,9 +9,10 @@ export type Commit = {
   committedAt: Date;
 };
 
-// Every seed query embeds its owning profile for the row display.
+// Every seed query embeds its owning profile for the row display and a
+// watcher count for the watch button.
 const SEED_SELECT =
-  "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, connected_at, profiles(username, avatar_url)";
+  "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, connected_at, watchers(count), profiles(username, avatar_url)";
 
 function mapProfileAndSeed(row: Record<string, unknown>): Seed {
   const profiles = row.profiles as
@@ -21,6 +22,10 @@ function mapProfileAndSeed(row: Record<string, unknown>): Seed {
   if (!profile?.username) {
     throw new Error(`Project ${row.id} has no owning profile`);
   }
+  const watcherRows = row.watchers as { count: number }[] | { count: number };
+  const watchCount = Array.isArray(watcherRows)
+    ? Number(watcherRows[0]?.count ?? 0)
+    : Number(watcherRows?.count ?? 0);
   return {
     id: row.id as string,
     userId: row.user_id as string,
@@ -37,6 +42,7 @@ function mapProfileAndSeed(row: Record<string, unknown>): Seed {
     connectedAt: row.connected_at
       ? new Date(row.connected_at as string)
       : null,
+    watchCount,
   };
 }
 
@@ -88,13 +94,53 @@ export async function getSeedsForUser(userId: string): Promise<Seed[]> {
   return boardOrder(data.map(mapProfileAndSeed));
 }
 
+export async function isWatching(userId: string, seedId: string) {
+  const { data, error } = await getSupabase()
+    .from("watchers")
+    .select("project_id")
+    .eq("project_id", seedId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) {
+    throw new Error(`Watch check failed: ${error.message}`);
+  }
+  return !!data;
+}
+
+export async function getWatchedProjectIds(
+  userId: string
+): Promise<Set<string>> {
+  const { data, error } = await getSupabase()
+    .from("watchers")
+    .select("project_id")
+    .eq("user_id", userId);
+  if (error) {
+    throw new Error(`Watchlist ids query failed: ${error.message}`);
+  }
+  return new Set(data.map((row) => row.project_id as string));
+}
+
+export async function getWatchedSeeds(userId: string): Promise<Seed[]> {
+  const { data, error } = await getSupabase()
+    .from("projects")
+    .select(`${SEED_SELECT}, watchers!inner(user_id)`)
+    .eq("watchers.user_id", userId)
+    .order("planted_at", { ascending: false });
+
+  if (error) {
+    throw new Error(`Watchlist query failed: ${error.message}`);
+  }
+
+  return boardOrder(data.map(mapProfileAndSeed));
+}
+
 export async function getSeedWithLog(
   id: string
 ): Promise<{ seed: Seed; commits: Commit[] } | null> {
   const { data: row, error } = await getSupabase()
     .from("projects")
     .select(
-      "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, connected_at, profiles(username, avatar_url)"
+      "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, connected_at, watchers(count), profiles(username, avatar_url)"
     )
     .eq("id", id)
     .maybeSingle();

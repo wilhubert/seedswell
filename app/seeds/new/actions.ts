@@ -2,19 +2,13 @@
 
 import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { requireUser } from "@/lib/supabase-server";
 
 const NAME_MAX = 80;
 const TAGLINE_MAX = 200;
 
 export async function plantSeed(formData: FormData) {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    redirect("/auth/login");
-  }
+  const { supabase, user } = await requireUser();
 
   const name = String(formData.get("name") ?? "").trim();
   const tagline = String(formData.get("tagline") ?? "").trim();

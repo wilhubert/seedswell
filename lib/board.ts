@@ -12,6 +12,7 @@ export type Seed = {
   shippedAt: Date | null;
   shipDays: number | null;
   connectedAt: Date | null;
+  watchCount: number;
 };
 
 const DAY_MS = 86_400_000;

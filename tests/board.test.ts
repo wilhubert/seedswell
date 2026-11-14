@@ -20,6 +20,7 @@ function makeSeed(overrides: Partial<Seed>): Seed {
     shippedAt: null,
     shipDays: null,
     connectedAt: null,
+    watchCount: 0,
     ...overrides,
   };
 }

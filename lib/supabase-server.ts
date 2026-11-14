@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
@@ -26,4 +27,18 @@ export async function createSupabaseServerClient() {
       },
     },
   });
+}
+
+// Every "logged-in only" path in server actions and RSC pages: resolve the
+// session, demand a user, bounce to /auth/login otherwise. redirect() works
+// by throwing, so never wrap this call in try/catch.
+export async function requireUser() {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    redirect("/auth/login");
+  }
+  return { supabase, user };
 }

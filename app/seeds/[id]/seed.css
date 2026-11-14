@@ -113,6 +113,18 @@
   cursor: pointer;
 }
 
+.watch {
+  margin-top: 44px;
+  padding-top: 24px;
+  border-top: 1px solid var(--panel-deep);
+}
+
+.watch__hint {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
 .setup h2 {
   margin-top: 44px;
   padding-top: 24px;

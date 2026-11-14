@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import SeedRow from "@/components/SeedRow";
+import WatchButton from "@/components/WatchButton";
 import { counterLabel } from "@/lib/board";
-import { getSeedWithLog } from "@/lib/seeds";
+import { getSeedWithLog, isWatching } from "@/lib/seeds";
 import { getOwnWebhookSecret } from "@/lib/secrets";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { shipSeed } from "./actions";
@@ -16,6 +17,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   "not-owner": "Only the owner can ship this seed.",
   "already-shipped": "This seed is already shipped — the book is closed.",
   "ship-failed": "Marking shipped failed.",
+  "watch-failed": "Watching failed.",
 };
 
 export default async function SeedPage({
@@ -49,6 +51,8 @@ export default async function SeedPage({
     : null;
 
   const betOpen = isOwner && !seed.shippedAt;
+  const watching =
+    !isOwner && !!user ? await isWatching(user!.id, seed.id) : false;
 
   return (
     <main>
@@ -104,6 +108,19 @@ export default async function SeedPage({
               </div>
             </div>
           )}
+          <div className="watch">
+            <WatchButton
+              seedId={seed.id}
+              watching={watching}
+              returnTo={`/seeds/${seed.id}`}
+              count={seed.watchCount}
+              disabled={isOwner}
+              loggedIn={!!user}
+            />
+            <p className="watch__hint">
+              Watched seeds land on your watchlist with their ship receipts.
+            </p>
+          </div>
           {isOwner && (
             <div className="setup">
               <h2>Connect your repo</h2>

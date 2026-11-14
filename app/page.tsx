@@ -1,12 +1,20 @@
 import SeedRow from "@/components/SeedRow";
+import WatchButton from "@/components/WatchButton";
 import { counterLabel } from "@/lib/board";
-import { getBoardSeeds } from "@/lib/seeds";
+import { getBoardSeeds, getWatchedProjectIds } from "@/lib/seeds";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 import "./landing.css";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const seeds = await getBoardSeeds();
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const watched = user ? await getWatchedProjectIds(user.id) : new Set<string>();
 
   return (
     <main>
@@ -36,6 +44,16 @@ export default async function Home() {
               pushes={seed.pushCount}
               logoUrl={seed.logoUrl}
               avatarUrl={seed.avatarUrl}
+              watch={
+                <WatchButton
+                  seedId={seed.id}
+                  watching={!!user && watched.has(seed.id)}
+                  returnTo="/"
+                  count={seed.watchCount}
+                  disabled={!!user && seed.userId === user.id}
+                  loggedIn={!!user}
+                />
+              }
             />
           ))
         )}

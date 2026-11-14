@@ -1,5 +1,4 @@
-import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { requireUser } from "@/lib/supabase-server";
 import { plantSeed } from "./actions";
 import "./new-seed.css";
 
@@ -10,13 +9,7 @@ export default async function NewSeedPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    redirect("/auth/login");
-  }
+  await requireUser();
 
   const params = await searchParams;
   const errorMessage =

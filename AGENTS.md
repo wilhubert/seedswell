@@ -8,7 +8,7 @@ You are working on **Seedswell**: a public countdown board for people building s
 
 **Shipped = a stranger can register with GitHub, create a project with a target date, connect their repo via webhook, and see commits and a ticking `day/30` counter on a public board.**
 
-Nothing outside that sentence gets built before Dec 1. If the user asks for something not in it — comments, watchers, notification bells, badge embeds, OG images, avatar uploads, categories, filters, admin panels, analytics, emails — do not implement it. Respond by adding a one-line entry to `IDEAS.md` with today's date, and say you've parked it there. The only exceptions: bug fixes, security hardening, and changes required by the sentence above.
+Nothing outside that sentence gets built before Dec 1. If the user asks for something not in it — comments, watchers, notification bells, badge embeds, OG images, avatar uploads, categories, filters, admin panels, analytics, emails — do not implement it. Respond by adding a one-line entry to `IDEAS.md` with today's date, and say you've parked it there. The only exceptions: bug fixes, security hardening, and changes required by the sentence above — plus the Nov 14 human-approved extension: watching (watch button on seeds, ship-event updates on the `/watching` list; see the data model).
 
 `DEC1.md` holds the finish line and the cut list. `IDEAS.md` is the parking lot. This protocol is non-negotiable: the failure mode this project must avoid is a beautifully over-built app on Dec 15.
 
@@ -31,6 +31,7 @@ Nothing outside that sentence gets built before Dec 1. If the user asks for some
 - `profiles`: `id` (uuid, matches auth user), `username`, `avatar_url`, `bio`, `created_at`. Seeded on first GitHub sign-in.
 - `projects`: `id`, `user_id`, `name`, `tagline`, `planted_at`, `target_days`, `shipped_at`, `ship_days`, `webhook_secret`, `connected_at`, `push_count`. No origin/status fields beyond these; the `day N/30 · X to go` counter is **computed client-side** from `planted_at + target_days`, never stored.
 - `commits` (build log): `sha` (unique with project), `project_id`, `message`, `author`, `url`, `committed_at`, `pushed_at`.
+- `watchers` (watch): `project_id` + `user_id` (composite primary key), `created_at`. Ship-event watch only; the `/watching` page is the update surface. No push notifications, no email (no provider key), no counts surfaced.
 
 Shipped = `shipped_at` set (with `ship_days` for the receipt). It is a user action; the system never auto-closes anything. (Called off with honesty note was removed Nov 14; idle dormancy is parked in `IDEAS.md`.)
 
@@ -39,6 +40,7 @@ Shipped = `shipped_at` set (with `ship_days` for the receipt). It is a user acti
 - **Small diffs.** One task per change. No drive-by refactors, no reformatting untouched files, no new dependencies without asking first.
 - **Commit messages are build-log entries.** They render publicly as Seedswell's proof of work: `Add profiles + projects schema`, `Webhook endpoint: HMAC verify + commit upsert` — never `fix`, `update`, `wip`, or `Initial commit`.
 - **Deploy per milestone.** After each working unit, the change goes to `main` and gets verified on the live URL, not just locally. Local-green/prod-red is the most common AI-code failure; catch it every milestone.
+- **Git is human-controlled.** Never run `git commit`, `git push`, or any other git command that changes history or remote state. Stage nothing, commit nothing, push nothing. Finish the work, report what changed, and wait for the human to drive git. The human's push to `main` is what triggers the deploy-per-milestone verification.
 - **Two-attempt circuit breaker.** If an approach fails twice, stop, explain the two failures plainly, and wait for the human. Do not try a third variation of the same idea unprompted.
 - **30-minute pixel rule.** UI polish is capped: pick reasonable defaults, don't gold-plate. Styling beyond "clean and consistent" goes to `IDEAS.md`.
 - **Honesty in error handling.** No silent catches, no fallbacks that hide failures, no fake success states. If the webhook verification fails, the request is rejected — visibly.

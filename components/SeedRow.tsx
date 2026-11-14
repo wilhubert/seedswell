@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 type SeedRowProps = {
   id: string;
@@ -9,6 +10,7 @@ type SeedRowProps = {
   logoUrl?: string | null;
   avatarUrl?: string | null;
   variant?: "board" | "card";
+  watch?: ReactNode;
 };
 
 export default function SeedRow({
@@ -20,28 +22,33 @@ export default function SeedRow({
   logoUrl,
   avatarUrl,
   variant = "board",
+  watch,
 }: SeedRowProps) {
   return (
-    <Link
-      href={`/seeds/${id}`}
+    // A button can't live inside the link, so the row is the container and
+    // the link covers the whole informational area.
+    <div
       className={`seed-row${variant === "card" ? " seed-row--card" : ""}`}
     >
-      <span className="seed-row__left">
-        {logoUrl ? (
-          <img src={logoUrl} alt="" className="seed-row__logo" />
-        ) : (
-          <span className="seed-row__logo" aria-hidden="true">
-            {name.slice(0, 1).toLowerCase()}
-          </span>
-        )}
-        <span className="seed-row__name">{name}</span>
-        {avatarUrl && (
-          <img src={avatarUrl} alt="" className="seed-row__avatar" />
-        )}
-        <span className="seed-row__owner">@{owner}</span>
-      </span>
-      <span className="seed-row__counter">{counter}</span>
-      <span className="seed-row__pushes">{pushes} pushes</span>
-    </Link>
+      <Link href={`/seeds/${id}`} className="seed-row__link">
+        <span className="seed-row__left">
+          {logoUrl ? (
+            <img src={logoUrl} alt="" className="seed-row__logo" />
+          ) : (
+            <span className="seed-row__logo" aria-hidden="true">
+              {name.slice(0, 1).toLowerCase()}
+            </span>
+          )}
+          <span className="seed-row__name">{name}</span>
+          {avatarUrl && (
+            <img src={avatarUrl} alt="" className="seed-row__avatar" />
+          )}
+          <span className="seed-row__owner">@{owner}</span>
+        </span>
+        <span className="seed-row__counter">{counter}</span>
+        <span className="seed-row__pushes">{pushes} pushes</span>
+      </Link>
+      {watch}
+    </div>
   );
 }

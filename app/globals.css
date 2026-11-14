@@ -64,7 +64,7 @@ a {
   display: flex;
   align-items: center;
   gap: 18px;
-  font-weight: 800;
+  font-weight: 600;
   font-size: 24px;
 }
 
@@ -87,12 +87,16 @@ a {
   color: var(--muted);
 }
 
+.header-watch {
+  margin-left: 12px;
+  font-weight: 400;
+  color: var(--blue);
+}
+
 .seed-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  height: 62px;
+  gap: 12px;
   padding: 0 22px;
   background: var(--panel);
   border: 0.5px solid var(--line);
@@ -100,12 +104,25 @@ a {
 }
 
 .seed-row--card {
+  padding: 0 26px;
+}
+
+.seed-row__link {
+  flex: 1;
+  min-width: 0;
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.seed-row--card .seed-row__link {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   gap: 8px;
-  height: 102px;
-  padding: 0 26px;
+  min-height: 102px;
 }
 
 .seed-row__left {
@@ -159,4 +176,19 @@ a {
   color: var(--muted);
   font-size: 14px;
   white-space: nowrap;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--blue);
+}
+
+.btn--watch {
+  flex-shrink: 0;
+}
+
+.btn--watch:disabled {
+  background: transparent;
+  color: var(--muted);
+  cursor: default;
 }
