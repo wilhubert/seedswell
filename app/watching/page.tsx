@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
 import { counterLabel } from "@/lib/board";
-import { getWatchedSeeds } from "@/lib/seeds";
+import { getWatchedProjectIds, getSeedsByIds } from "@/lib/seeds";
 import { requireUser } from "@/lib/supabase-server";
 import "./watching.css";
 
@@ -10,7 +10,8 @@ export const dynamic = "force-dynamic";
 export default async function WatchingPage() {
   const { user } = await requireUser();
 
-  const seeds = await getWatchedSeeds(user.id);
+  const watchedIds = await getWatchedProjectIds(user.id);
+  const seeds = await getSeedsByIds([...watchedIds]);
 
   return (
     <main>

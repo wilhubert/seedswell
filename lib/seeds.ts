@@ -121,17 +121,17 @@ export async function getWatchedProjectIds(
   return new Set(data.map((row) => row.project_id as string));
 }
 
-export async function getWatchedSeeds(userId: string): Promise<Seed[]> {
+export async function getSeedsByIds(ids: string[]): Promise<Seed[]> {
+  if (ids.length === 0) {
+    return [];
+  }
   const { data, error } = await getSupabase()
     .from("projects")
-    .select(`${SEED_SELECT}, watchers!inner(user_id)`)
-    .eq("watchers.user_id", userId)
-    .order("planted_at", { ascending: false });
-
+    .select(SEED_SELECT)
+    .in("id", ids);
   if (error) {
-    throw new Error(`Watchlist query failed: ${error.message}`);
+    throw new Error(`Seeds by id query failed: ${error.message}`);
   }
-
   return boardOrder(data.map(mapProfileAndSeed));
 }
 
