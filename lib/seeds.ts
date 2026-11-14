@@ -10,9 +10,10 @@ export type Commit = {
 };
 
 // Every seed query embeds its owning profile for the row display and a
-// watcher count for the watch button.
+// watcher count for the watch button. The profile embed must name its FK:
+// watchers added a second projects→profiles path and PostgREST won't guess.
 const SEED_SELECT =
-  "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, connected_at, watchers(count), profiles(username, avatar_url)";
+  "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, connected_at, watchers(count), profiles!projects_user_id_fkey(username, avatar_url)";
 
 function mapProfileAndSeed(row: Record<string, unknown>): Seed {
   const profiles = row.profiles as
@@ -140,7 +141,7 @@ export async function getSeedWithLog(
   const { data: row, error } = await getSupabase()
     .from("projects")
     .select(
-      "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, connected_at, watchers(count), profiles(username, avatar_url)"
+      "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, connected_at, watchers(count), profiles!projects_user_id_fkey(username, avatar_url)"
     )
     .eq("id", id)
     .maybeSingle();
