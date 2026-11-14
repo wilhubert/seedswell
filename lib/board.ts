@@ -13,6 +13,7 @@ export type Seed = {
   cancelledAt: Date | null;
   shipDays: number | null;
   connectedAt: Date | null;
+  cancelNote: string | null;
 };
 
 const DAY_MS = 86_400_000;

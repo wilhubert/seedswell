@@ -21,6 +21,7 @@ function makeSeed(overrides: Partial<Seed>): Seed {
     cancelledAt: null,
     shipDays: null,
     connectedAt: null,
+    cancelNote: null,
     ...overrides,
   };
 }

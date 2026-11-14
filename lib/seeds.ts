@@ -11,7 +11,7 @@ export type Commit = {
 
 // Every seed query embeds its owning profile for the row display.
 const SEED_SELECT =
-  "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, cancelled_at, ship_days, connected_at, profiles(username, avatar_url)";
+  "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, cancelled_at, ship_days, connected_at, cancel_note, profiles(username, avatar_url)";
 
 function mapProfileAndSeed(row: Record<string, unknown>): Seed {
   const profiles = row.profiles as
@@ -40,6 +40,7 @@ function mapProfileAndSeed(row: Record<string, unknown>): Seed {
     connectedAt: row.connected_at
       ? new Date(row.connected_at as string)
       : null,
+    cancelNote: (row.cancel_note as string | null) ?? null,
   };
 }
 
