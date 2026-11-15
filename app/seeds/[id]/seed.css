@@ -92,6 +92,25 @@
   font-size: 16px;
 }
 
+.build-log__more {
+  list-style: none;
+}
+
+.build-log__more summary {
+  cursor: pointer;
+  color: var(--blue);
+  font-size: 14px;
+  padding: 6px 0;
+}
+
+.build-log__more summary:hover {
+  text-decoration: underline;
+}
+
+.build-log__more .build-log {
+  margin-top: 31px;
+}
+
 .seed-error {
   color: #d74871;
   margin: 20px 0 0;

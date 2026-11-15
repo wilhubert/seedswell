@@ -55,6 +55,29 @@ export default async function SeedPage({
   const watching =
     !isOwner && !!user ? await isWatching(user!.id, seed.id) : false;
 
+  // A long build log keeps its two ends visible: the newest pushes at the
+  // top, the first ones at the bottom. Everything between collapses.
+  const HEAD_COUNT = 4;
+  const TAIL_COUNT = 3;
+  const collapse = commits.length > HEAD_COUNT + TAIL_COUNT;
+  const headCommits = collapse ? commits.slice(0, HEAD_COUNT) : commits;
+  const middleCommits = collapse
+    ? commits.slice(HEAD_COUNT, commits.length - TAIL_COUNT)
+    : [];
+  const tailCommits = collapse
+    ? commits.slice(commits.length - TAIL_COUNT)
+    : [];
+
+  const commitItem = (commit: (typeof commits)[number]) => (
+    <li key={commit.sha} className="build-item">
+      <p className="build-item__msg">{commit.message}</p>
+      <p className="build-item__meta">
+        {commit.author ?? "unknown"} ·{" "}
+        {commit.committedAt.toISOString().slice(0, 10)}
+      </p>
+    </li>
+  );
+
   return (
     <main>
       <div className="project-top">
@@ -90,15 +113,18 @@ export default async function SeedPage({
             <p className="build-log__empty">No pushes yet.</p>
           ) : (
             <ol className="build-log">
-              {commits.map((commit) => (
-                <li key={commit.sha} className="build-item">
-                  <p className="build-item__msg">{commit.message}</p>
-                  <p className="build-item__meta">
-                    {commit.author ?? "unknown"} ·{" "}
-                    {commit.committedAt.toISOString().slice(0, 10)}
-                  </p>
+              {headCommits.map(commitItem)}
+              {middleCommits.length > 0 && (
+                <li className="build-log__more">
+                  <details>
+                    <summary>show {middleCommits.length} earlier pushes</summary>
+                    <ol className="build-log">
+                      {middleCommits.map(commitItem)}
+                    </ol>
+                  </details>
                 </li>
-              ))}
+              )}
+              {tailCommits.map(commitItem)}
             </ol>
           )}
           {betOpen && (
