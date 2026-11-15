@@ -44,9 +44,6 @@ export default async function Header() {
               @
               {(user.user_metadata?.user_name as string | undefined) ?? user.id}
             </Link>
-            <Link className="header-watch" href="/watching">
-              watching
-            </Link>
           </span>
           <form action="/auth/logout" method="post">
             <button className="btn" type="submit">

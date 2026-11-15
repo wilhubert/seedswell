@@ -26,7 +26,7 @@ export default async function Home() {
         <a className="btn btn--join" href="/seeds/new">
           Join the swell
         </a>
-        <p className="promo">The first 100 seeds are free!</p>
+        <p className="promo">The first 100 seeds are on me!</p>
       </section>
       <section className="board">
         {seeds.length === 0 ? (

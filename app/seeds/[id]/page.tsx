@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
 import WatchButton from "@/components/WatchButton";
 import { counterLabel } from "@/lib/board";
@@ -28,8 +29,8 @@ export default async function SeedPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
-  const params2 = await searchParams;
-  const errorCode = typeof params2.error === "string" ? params2.error : null;
+  const search = await searchParams;
+  const errorCode = typeof search.error === "string" ? search.error : null;
   const errorMessage = errorCode ? (ERROR_MESSAGES[errorCode] ?? "Something went wrong.") : null;
 
   const result = await getSeedWithLog(id);
@@ -66,6 +67,11 @@ export default async function SeedPage({
           logoUrl={seed.logoUrl}
           avatarUrl={seed.avatarUrl}
         />
+        {isOwner && (
+          <Link href={`/seeds/${seed.id}/edit`} className="project-top__edit">
+            edit seed
+          </Link>
+        )}
       </div>
       <div className="project-body">
         {errorMessage && <p className="seed-error">{errorMessage}</p>}

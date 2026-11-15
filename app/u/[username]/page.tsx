@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
 import { counterLabel } from "@/lib/board";
 import { getProfileByUsername, getSeedsForUser } from "@/lib/seeds";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 import "./profile.css";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +20,12 @@ export default async function ProfilePage({
   }
 
   const seeds = await getSeedsForUser(profile.id);
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isSelf = !!user && user.id === profile.id;
 
   return (
     <main className="profile-grid">
@@ -40,6 +48,11 @@ export default async function ProfilePage({
           >
             GitHub
           </a>
+          {isSelf && (
+            <Link className="btn btn--ghost" href="/watching">
+              watching
+            </Link>
+          )}
         </div>
       </section>
       <section className="seeds-col">

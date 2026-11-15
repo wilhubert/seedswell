@@ -17,6 +17,12 @@
   line-height: 1.4;
 }
 
+.new-seed__fixed {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 .new-seed__form {
   display: flex;
   flex-direction: column;

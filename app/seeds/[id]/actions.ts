@@ -1,10 +1,58 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { requireUser } from "@/lib/supabase-server";
 
 const DAY_MS = 86_400_000;
+
+// Same field rules as the plant form: editing is for fixing story and
+// identity, never for moving the called date.
+const NAME_MAX = 80;
+const TAGLINE_MAX = 200;
+
+export async function editSeed(formData: FormData) {
+  const projectId = String(formData.get("project_id") ?? "");
+  const { supabase, user } = await requireUser();
+
+  const { data: project, error } = await supabase
+    .from("projects")
+    .select("id, user_id")
+    .eq("id", projectId)
+    .maybeSingle();
+
+  if (error || !project) {
+    notFound();
+  }
+  if (project.user_id !== user.id) {
+    notFound();
+  }
+
+  const name = String(formData.get("name") ?? "").trim();
+  const tagline = String(formData.get("tagline") ?? "").trim();
+  const logoUrl = String(formData.get("logo_url") ?? "").trim();
+
+  const nameOk = name.length >= 1 && name.length <= NAME_MAX;
+  const taglineOk = tagline.length <= TAGLINE_MAX;
+  const logoOk = logoUrl === "" || /^https?:\/\//.test(logoUrl);
+
+  if (!nameOk || !taglineOk || !logoOk) {
+    redirect(`/seeds/${projectId}/edit?error=invalid`);
+  }
+
+  const { error: updateError } = await supabase
+    .from("projects")
+    .update({ name, tagline: tagline || null, logo_url: logoUrl || null })
+    .eq("id", projectId);
+  if (updateError) {
+    redirect(
+      `/seeds/${projectId}/edit?error=update-failed&message=${encodeURIComponent(updateError.message)}`
+    );
+  }
+
+  revalidatePath(`/seeds/${projectId}`);
+  redirect(`/seeds/${projectId}`);
+}
 
 async function requireOwnOpenSeed(projectId: string) {
   const { supabase, user } = await requireUser();

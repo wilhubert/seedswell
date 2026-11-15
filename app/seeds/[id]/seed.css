@@ -4,6 +4,14 @@
   padding: 0 24px;
 }
 
+.project-top__edit {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--blue);
+}
+
 .project-body {
   max-width: 561px;
   margin: 119px auto 0;
