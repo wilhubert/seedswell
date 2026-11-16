@@ -42,12 +42,16 @@ export default async function ProfilePage({
         <h1 className="profile-card__name">@{profile.username}</h1>
         {profile.bio && <p className="profile-card__bio">{profile.bio}</p>}
         <div className="profile-card__links">
-          <a
-            className="btn btn--github"
-            href={`https://github.com/${profile.username}`}
-          >
-            GitHub
-          </a>
+          {/* GitHub always provides an avatar at sign-in; email users have
+              none, so this link exists only for GitHub-registered users. */}
+          {profile.avatarUrl && (
+            <a
+              className="btn btn--github"
+              href={`https://github.com/${profile.username}`}
+            >
+              GitHub
+            </a>
+          )}
           {isSelf && (
             <Link className="btn btn--ghost" href="/watching">
               watching

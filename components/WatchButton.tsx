@@ -25,7 +25,10 @@ export default function WatchButton({
 
   if (!loggedIn) {
     return (
-      <Link className="btn btn--watch" href="/auth/login">
+      <Link
+        className="btn btn--watch"
+        href={`/auth/login?next=${encodeURIComponent(returnTo)}`}
+      >
         {label}
       </Link>
     );
