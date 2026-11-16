@@ -55,18 +55,10 @@ export default async function SeedPage({
   const watching =
     !isOwner && !!user ? await isWatching(user!.id, seed.id) : false;
 
-  // A long build log keeps its two ends visible: the newest pushes at the
-  // top, the first ones at the bottom. Everything between collapses.
-  const HEAD_COUNT = 4;
-  const TAIL_COUNT = 3;
-  const collapse = commits.length > HEAD_COUNT + TAIL_COUNT;
-  const headCommits = collapse ? commits.slice(0, HEAD_COUNT) : commits;
-  const middleCommits = collapse
-    ? commits.slice(HEAD_COUNT, commits.length - TAIL_COUNT)
-    : [];
-  const tailCommits = collapse
-    ? commits.slice(commits.length - TAIL_COUNT)
-    : [];
+  // A long build log keeps only its two ends: the newest push and the
+  // seed's first push. Everything between collapses behind a toggle.
+  const collapse = commits.length > 2;
+  const middleCommits = collapse ? commits.slice(1, -1) : [];
 
   const commitItem = (commit: (typeof commits)[number]) => (
     <li key={commit.sha} className="build-item">
@@ -111,9 +103,9 @@ export default async function SeedPage({
           <h2>Build log</h2>
           {commits.length === 0 ? (
             <p className="build-log__empty">No pushes yet.</p>
-          ) : (
+          ) : collapse ? (
             <ol className="build-log">
-              {headCommits.map(commitItem)}
+              {commitItem(commits[0])}
               {middleCommits.length > 0 && (
                 <li className="build-log__more">
                   <details>
@@ -124,8 +116,10 @@ export default async function SeedPage({
                   </details>
                 </li>
               )}
-              {tailCommits.map(commitItem)}
+              {commitItem(commits[commits.length - 1])}
             </ol>
+          ) : (
+            <ol className="build-log">{commits.map(commitItem)}</ol>
           )}
           {betOpen && (
             <div className="bet">
