@@ -59,12 +59,30 @@ export async function loginWithEmail(formData: FormData) {
     password,
   });
 
-  if (error || !data.session) {
+  if (error || !data.session || !data.user) {
     redirect(
       `/auth/login?error=login-failed&message=${encodeURIComponent(
         error?.message ?? "unknown"
       )}&next=${encodeURIComponent(next)}`
     );
+  }
+
+  // With "Confirm email" on, registration ends before the profile row can
+  // be inserted — no session exists yet. First login completes it, the
+  // same way the GitHub callback upserts on every sign-in.
+  const username = (data.user.user_metadata?.user_name as string | undefined) ?? null;
+  if (username) {
+    const { error: seedError } = await supabase.from("profiles").upsert(
+      { id: data.user.id, username, avatar_url: null, bio: null },
+      { onConflict: "id", ignoreDuplicates: true }
+    );
+    if (seedError) {
+      redirect(
+        `/auth/login?error=profile-seed&message=${encodeURIComponent(
+          seedError.message
+        )}`
+      );
+    }
   }
 
   revalidatePath("/", "layout");

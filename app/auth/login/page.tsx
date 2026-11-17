@@ -11,6 +11,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   "github-start": "GitHub sign-in failed to start. Try again.",
   "confirm-email":
     "Your account is created but needs email confirmation first — check your inbox, then log in here.",
+  "profile-seed":
+    "You are logged in, but creating your profile failed. Try logging in again.",
 };
 
 export default async function LoginPage({
