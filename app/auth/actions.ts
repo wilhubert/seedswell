@@ -132,13 +132,15 @@ export async function registerWithEmail(formData: FormData) {
     redirect("/auth/register?error=username-taken");
   }
 
-  // user_name lands in user_metadata so the header resolves the profile
-  // link the same way it does for GitHub users.
+  // user_name is what the app reads (header, profile seeding), matching the
+  // GitHub metadata layout; full_name and name are the keys the Supabase
+  // dashboard and third-party tools display, which is why all three carry
+  // the same value.
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      data: { user_name: username },
+      data: { user_name: username, full_name: username, name: username },
     },
   });
 
