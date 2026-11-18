@@ -17,6 +17,13 @@
   line-height: 1.4;
 }
 
+.auth__notice {
+  color: var(--blue);
+  margin-bottom: 18px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
 .auth__form {
   display: flex;
   flex-direction: column;

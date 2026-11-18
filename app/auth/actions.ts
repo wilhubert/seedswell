@@ -89,6 +89,27 @@ export async function loginWithEmail(formData: FormData) {
   redirect(next);
 }
 
+export async function resendConfirmationEmail(formData: FormData) {
+  const email = String(formData.get("email") ?? "").trim();
+  if (!EMAIL_RE.test(email)) {
+    redirect("/auth/login?error=invalid");
+  }
+
+  const supabase = await createSupabaseServerClient();
+  // Supabase answers identically whether the address has a pending signup or
+  // not, so the copy below stays conditional on purpose — no enumeration.
+  const { error } = await supabase.auth.resend({ type: "signup", email });
+  if (error) {
+    redirect(
+      `/auth/login?error=resend-failed&message=${encodeURIComponent(
+        error.message
+      )}`
+    );
+  }
+
+  redirect("/auth/login?error=resend-sent");
+}
+
 export async function registerWithEmail(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
@@ -129,7 +150,7 @@ export async function registerWithEmail(formData: FormData) {
   if (!data.session || !data.user) {
     // Email confirmation is on in Supabase: no session until the inbox
     // link is clicked. The dashboard setting decides this.
-    redirect("/auth/login?error=confirm-email");
+    redirect("/auth/login?confirm-email");
   }
 
   const { error: seedError } = await supabase.from("profiles").insert({
