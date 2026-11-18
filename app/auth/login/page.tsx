@@ -14,6 +14,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   "login-failed": "Login failed. Wrong email or password?",
   "github-start": "GitHub sign-in failed to start. Try again.",
   "resend-failed": "Resending the confirmation email failed.",
+  "confirm-exchange":
+    "Your email is confirmed, but opening the session failed — log in below and you are set.",
   "profile-seed":
     "You are logged in, but creating your profile failed. Try logging in again.",
 };

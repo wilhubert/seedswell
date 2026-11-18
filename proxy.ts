@@ -40,6 +40,30 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // PKCE confirmation links redirect to the site with a one-time ?code= —
+  // the email confirmation itself already succeeded on Supabase's side.
+  // Exchange it here so the link lands the user logged in, on any page.
+  const code = request.nextUrl.searchParams.get("code");
+  if (code) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    const target = new URL(request.nextUrl.pathname, request.url);
+    if (error || !data.session) {
+      // Wrong device for the PKCE verifier, or an already-used code: the
+      // email is still confirmed, ordinary login completes the account.
+      target.pathname = "/auth/login";
+      target.search = "?error=confirm-exchange";
+    } else {
+      target.search = "";
+    }
+    const redirect = NextResponse.redirect(target);
+    // The exchange wrote its session cookies onto the pass-through response;
+    // they must travel with the redirect or the login is silently lost.
+    for (const { name, value, ...options } of response.cookies.getAll()) {
+      redirect.cookies.set(name, value, options);
+    }
+    return redirect;
+  }
+
   return response;
 }
 
