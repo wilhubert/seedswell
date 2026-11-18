@@ -13,15 +13,19 @@ const ERROR_MESSAGES: Record<string, string> = {
   invalid: "Please provide a valid email and a password.",
   "login-failed": "Login failed. Wrong email or password?",
   "github-start": "GitHub sign-in failed to start. Try again.",
-  "resend-sent":
-    "If that address has an unconfirmed account, a new confirmation email is on its way.",
   "resend-failed": "Resending the confirmation email failed.",
   "profile-seed":
     "You are logged in, but creating your profile failed. Try logging in again.",
 };
 
-const CONFIRM_EMAIL_NOTICE =
-  "Your account is created but needs email confirmation first — check your inbox, then log in here.";
+// States, not errors: keyed by flag presence in the URL (?confirm-email,
+// ?resend-sent), never through the error= channel.
+const NOTICES: Record<string, string> = {
+  "confirm-email":
+    "Your account is created but needs email confirmation first — check your inbox, then log in here.",
+  "resend-sent":
+    "If that address has an unconfirmed account, a new confirmation email is on its way.",
+};
 
 export default async function LoginPage({
   searchParams,
@@ -30,6 +34,7 @@ export default async function LoginPage({
 }) {
   const search = await searchParams;
   const errorMessage = authErrorMessage(search, ERROR_MESSAGES);
+  const notices = Object.keys(NOTICES).filter((key) => key in search);
   // A state, not an error: registration succeeded, confirmation is pending.
   const needsConfirmation = "confirm-email" in search;
   const nextRaw = typeof search.next === "string" ? search.next : "/";
@@ -39,9 +44,11 @@ export default async function LoginPage({
     <main className="auth">
       <h1>Log in</h1>
       {errorMessage && <p className="auth__error">{errorMessage}</p>}
-      {needsConfirmation && (
-        <p className="auth__notice">{CONFIRM_EMAIL_NOTICE}</p>
-      )}
+      {notices.map((key) => (
+        <p className="auth__notice" key={key}>
+          {NOTICES[key]}
+        </p>
+      ))}
       {/* A lost first confirmation email otherwise dead-ends an account
           forever: repeat signups never re-send. */}
       {needsConfirmation && (

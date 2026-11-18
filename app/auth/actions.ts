@@ -107,7 +107,7 @@ export async function resendConfirmationEmail(formData: FormData) {
     );
   }
 
-  redirect("/auth/login?error=resend-sent");
+  redirect("/auth/login?resend-sent");
 }
 
 export async function registerWithEmail(formData: FormData) {
