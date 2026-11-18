@@ -11,7 +11,8 @@ import "./seed.css";
 
 export const dynamic = "force-dynamic";
 
-const WEBHOOK_URL_BASE = "https://seedswell.vercel.app/api/webhooks";
+// Production serves at seedswell.app; the vercel.app subdomain is gone.
+const WEBHOOK_URL_BASE = "https://seedswell.app/api/webhooks";
 
 const ERROR_MESSAGES: Record<string, string> = {
   lookup: "Could not find that seed.",
