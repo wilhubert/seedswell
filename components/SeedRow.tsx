@@ -45,14 +45,21 @@ export default function SeedRow({
             <span className="seed-row__counter-label" aria-hidden="true">
               {counter}
             </span>
+            {/* Two stacked rows: whole days to go ("01 D", heavy) above
+                the leftover hours ("24 H", light) — the muted letters sit
+                on the number's baseline. The aria-hidden label above
+                carries the full day X/30 · N to go reading. */}
             <span className="seed-row__counter-stack">
               <span className="seed-row__time seed-row__time--day">
-                <span className="seed-row__time-num">{counterStack.top}</span>
-                <span className="seed-row__time-unit">
-                  {counterStack.topUnit}
-                </span>
+                <span className="seed-row__time-num">{counterStack.days}</span>
+                <span className="seed-row__time-unit">D</span>
               </span>
-              <span className="seed-row__time seed-row__time--sub">days</span>
+              <span className="seed-row__time seed-row__time--hour">
+                <span className="seed-row__time-num">
+                  {counterStack.hours}
+                </span>
+                <span className="seed-row__time-unit">H</span>
+              </span>
             </span>
           </>
         ) : (

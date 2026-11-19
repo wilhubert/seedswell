@@ -215,25 +215,36 @@ a {
   flex-direction: column;
   gap: 2px;
   font-family: "Red Hat Mono", ui-monospace, monospace;
-  font-weight: 700;
   letter-spacing: -0.03em;
 }
 
+/* Time-dark: two number rows with their letter units hanging on the
+   number's baseline — the day row carries the weight (700), the hours
+   row reads lighter (400), the units mute out (#B1B1B1). */
 .seed-row__time {
   display: inline-flex;
   align-items: baseline;
-  gap: 2px;
+  gap: 3px;
 }
 
-.seed-row__time--day .seed-row__time-num {
-  font-size: 28.32px;
-  line-height: 1.05;
+.seed-row__time .seed-row__time-num {
+  font-size: 28px;
+  line-height: 28px;
   color: var(--ink);
 }
 
-.seed-row__time--day .seed-row__time-unit {
+.seed-row__time--day .seed-row__time-num {
+  font-weight: 700;
+}
+
+.seed-row__time--hour .seed-row__time-num {
+  font-weight: 400;
+}
+
+.seed-row__time .seed-row__time-unit {
   font-size: 15.2px;
   font-weight: 400;
+  line-height: 20px;
   color: var(--muted);
 }
 
@@ -508,14 +519,14 @@ a {
     transform: translateY(-50%);
   }
 
-  .seed-row__time--day .seed-row__time-num {
-    font-size: 20.18px;
-    line-height: 27px;
+  .seed-row__time .seed-row__time-num {
+    font-size: 22.4px;
+    line-height: 22.4px;
   }
 
-  .seed-row__time--day .seed-row__time-unit {
-    font-size: 10.83px;
-    line-height: 14px;
+  .seed-row__time .seed-row__time-unit {
+    font-size: 12.16px;
+    line-height: 16px;
   }
 
   .seed-row:not(.seed-row--card) .seed-row__visit {

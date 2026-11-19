@@ -17,6 +17,7 @@ export type Seed = {
 };
 
 const DAY_MS = 86_400_000;
+const HOUR_MS = 3_600_000;
 
 // The `day N/30 · X to go` counter is always computed, never stored.
 export function counterLabel(seed: Seed): string {
@@ -33,26 +34,30 @@ export function counterLabel(seed: Seed): string {
   return `day ${day}/${seed.targetDays} · ${day - seed.targetDays} over`;
 }
 
-// Stacked readout for the row's time block: the day count with the target
-// as the header ("29" + "/30").
+// Stacked readout for the row's time block: the remaining time split into
+// whole days ("01" over a muted D) and the leftover hours ("24" over a
+// muted H, never more than a day's worth). Zero-padded to hold the shape.
 export type CounterStack = {
-  top: string;
-  topUnit: string;
+  days: string;
+  hours: string;
 };
 
 export function counterStack(seed: Seed): CounterStack | null {
   if (seed.shippedAt) {
     return null;
   }
-  const day = Math.floor((Date.now() - seed.plantedAt.getTime()) / DAY_MS) + 1;
   const remainingMs =
     seed.plantedAt.getTime() + seed.targetDays * DAY_MS - Date.now();
   if (remainingMs <= 0) {
     return null;
   }
+  const days = Math.floor(remainingMs / DAY_MS);
+  // Leftover hours cap at 24: ceil keeps the last hour of a day showing
+  // 24 instead of dropping to 0 early.
+  const hours = Math.ceil((remainingMs % DAY_MS) / HOUR_MS);
   return {
-    top: `${day}`,
-    topUnit: `/${seed.targetDays}`,
+    days: String(days).padStart(2, "0"),
+    hours: String(hours).padStart(2, "0"),
   };
 }
 
