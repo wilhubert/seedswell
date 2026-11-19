@@ -48,3 +48,44 @@
   font-size: 20px;
   padding: 40px 0;
 }
+
+/* Mobile (Figma "Mobile-dark-seed" 402px frame) */
+@media (max-width: 520px) {
+  .hero {
+    padding: 70px 25px 0;
+  }
+
+  .hero h1 {
+    font-size: 34px;
+  }
+
+  .hero__sub {
+    margin-top: 14px;
+    font-size: 15px;
+  }
+
+  .btn--join {
+    min-width: 170px;
+    height: 36px;
+    margin-top: 38px;
+    padding: 0 24px;
+    border-radius: 7px;
+    font-size: 14px;
+    color: #000;
+  }
+
+  .promo {
+    font-size: 12px;
+  }
+
+  .board {
+    margin-top: 80px;
+    margin-bottom: 90px;
+    padding: 0 24px;
+    gap: 26px;
+  }
+
+  .board__empty {
+    font-size: 16px;
+  }
+}

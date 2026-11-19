@@ -80,7 +80,13 @@ export async function shipSeed(formData: FormData) {
   const projectId = String(formData.get("project_id") ?? "");
   const { supabase, project } = await requireOwnOpenSeed(projectId);
 
-  // The receipt records the true day number, late or not.
+  // The receipt records the true day number, late or not. A live URL is
+  // optional; the board's "built" pill links out when one was given.
+  const shipUrl = String(formData.get("ship_url") ?? "").trim();
+  if (shipUrl !== "" && !/^https?:\/\//.test(shipUrl)) {
+    redirect(`/seeds/${projectId}?error=invalid-url`);
+  }
+
   const shipDays =
     Math.floor(
       (Date.now() - new Date(project.planted_at).getTime()) / DAY_MS
@@ -88,7 +94,11 @@ export async function shipSeed(formData: FormData) {
 
   const { error } = await supabase
     .from("projects")
-    .update({ shipped_at: new Date().toISOString(), ship_days: shipDays })
+    .update({
+      shipped_at: new Date().toISOString(),
+      ship_days: shipDays,
+      ship_url: shipUrl || null,
+    })
     .eq("id", projectId);
   if (error) {
     redirect(

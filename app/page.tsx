@@ -1,6 +1,6 @@
 import SeedRow from "@/components/SeedRow";
 import WatchButton from "@/components/WatchButton";
-import { counterLabel } from "@/lib/board";
+import { counterLabel, counterStack } from "@/lib/board";
 import { getBoardSeeds, getWatchedProjectIds } from "@/lib/seeds";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import "./landing.css";
@@ -41,6 +41,10 @@ export default async function Home() {
               name={seed.name}
               owner={seed.owner}
               counter={counterLabel(seed)}
+              counterStack={counterStack(seed)}
+              tagline={seed.tagline}
+              shipped={!!seed.shippedAt}
+              shipUrl={seed.shipUrl}
               pushes={seed.pushCount}
               logoUrl={seed.logoUrl}
               avatarUrl={seed.avatarUrl}

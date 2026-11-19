@@ -13,7 +13,7 @@ export type Commit = {
 // watcher count for the watch button. The profile embed must name its FK:
 // watchers added a second projects→profiles path and PostgREST won't guess.
 const SEED_SELECT =
-  "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, connected_at, watchers(count), profiles!projects_user_id_fkey(username, avatar_url)";
+  "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, ship_url, connected_at, watchers(count), profiles!projects_user_id_fkey(username, avatar_url)";
 
 function mapProfileAndSeed(row: Record<string, unknown>): Seed {
   const profiles = row.profiles as
@@ -40,6 +40,7 @@ function mapProfileAndSeed(row: Record<string, unknown>): Seed {
     pushCount: row.push_count as number,
     shippedAt: row.shipped_at ? new Date(row.shipped_at as string) : null,
     shipDays: (row.ship_days as number | null) ?? null,
+    shipUrl: (row.ship_url as string | null) ?? null,
     connectedAt: row.connected_at
       ? new Date(row.connected_at as string)
       : null,
@@ -141,7 +142,7 @@ export async function getSeedWithLog(
   const { data: row, error } = await getSupabase()
     .from("projects")
     .select(
-      "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, connected_at, watchers(count), profiles!projects_user_id_fkey(username, avatar_url)"
+      "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, ship_url, connected_at, watchers(count), profiles!projects_user_id_fkey(username, avatar_url)"
     )
     .eq("id", id)
     .maybeSingle();

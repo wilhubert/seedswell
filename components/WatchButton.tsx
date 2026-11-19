@@ -10,6 +10,36 @@ type WatchButtonProps = {
   loggedIn: boolean;
 };
 
+function BellIcon() {
+  return (
+    <svg
+      className="btn__icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+    </svg>
+  );
+}
+
+// Desktop keeps the "watch · N" text; on mobile rows the action word hides
+// and only the bell + count pill shows.
+function watchContent(watching: boolean, count: number) {
+  return (
+    <>
+      <BellIcon />
+      <span className="btn__watch-action">{watching ? "stop" : "watch"} ·</span>
+      <span className="btn__watch-count">{count}</span>
+    </>
+  );
+}
+
 // Always visible with the watcher count. Watching toggles for any logged-in
 // user; the owner's own seed is disabled (you can't watch yourself);
 // anonymous visitors get a login link in the same shape.
@@ -28,18 +58,23 @@ export default function WatchButton({
       <Link
         className="btn btn--watch"
         href={`/auth/login?next=${encodeURIComponent(returnTo)}`}
+        aria-label={label}
       >
-        {label}
+        {watchContent(watching, count)}
       </Link>
     );
   }
 
   if (disabled) {
     return (
-      <button className="btn btn--watch" type="button" disabled
+      <button
+        className="btn btn--watch"
+        type="button"
+        disabled
         title="You can't watch your own seed"
+        aria-label={label}
       >
-        {label}
+        {watchContent(watching, count)}
       </button>
     );
   }
@@ -51,8 +86,9 @@ export default function WatchButton({
       <button
         className={watching ? "btn btn--watch btn--ghost" : "btn btn--watch"}
         type="submit"
+        aria-label={label}
       >
-        {label}
+        {watchContent(watching, count)}
       </button>
     </form>
   );

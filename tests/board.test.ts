@@ -19,6 +19,7 @@ function makeSeed(overrides: Partial<Seed>): Seed {
     pushCount: 0,
     shippedAt: null,
     shipDays: null,
+    shipUrl: null,
     connectedAt: null,
     watchCount: 0,
     ...overrides,

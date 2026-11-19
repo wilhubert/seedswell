@@ -18,7 +18,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400..800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@400..700&family=Rethink+Sans:wght@400..800&display=swap"
           rel="stylesheet"
         />
       </head>

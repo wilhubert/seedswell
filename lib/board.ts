@@ -11,6 +11,7 @@ export type Seed = {
   pushCount: number;
   shippedAt: Date | null;
   shipDays: number | null;
+  shipUrl: string | null;
   connectedAt: Date | null;
   watchCount: number;
 };
@@ -30,6 +31,29 @@ export function counterLabel(seed: Seed): string {
     return `day ${day}/${seed.targetDays} · ${toGo} to go`;
   }
   return `day ${day}/${seed.targetDays} · ${day - seed.targetDays} over`;
+}
+
+// Stacked readout for the row's time block: the day count with the target
+// as the header ("29" + "/30").
+export type CounterStack = {
+  top: string;
+  topUnit: string;
+};
+
+export function counterStack(seed: Seed): CounterStack | null {
+  if (seed.shippedAt) {
+    return null;
+  }
+  const day = Math.floor((Date.now() - seed.plantedAt.getTime()) / DAY_MS) + 1;
+  const remainingMs =
+    seed.plantedAt.getTime() + seed.targetDays * DAY_MS - Date.now();
+  if (remainingMs <= 0) {
+    return null;
+  }
+  return {
+    top: `${day}`,
+    topUnit: `/${seed.targetDays}`,
+  };
 }
 
 // Board rule: live seeds sort nearest their called date first; a seed

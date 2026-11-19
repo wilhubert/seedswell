@@ -18,6 +18,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   lookup: "Could not find that seed.",
   "not-owner": "Only the owner can ship this seed.",
   "already-shipped": "This seed is already shipped — the book is closed.",
+  "invalid-url": "The live URL must start with http:// or https://",
   "ship-failed": "Marking shipped failed.",
   "watch-failed": "Watching failed.",
 };
@@ -82,6 +83,8 @@ export default async function SeedPage({
           pushes={seed.pushCount}
           logoUrl={seed.logoUrl}
           avatarUrl={seed.avatarUrl}
+          shipped={!!seed.shippedAt}
+          shipUrl={seed.shipUrl}
         />
         {isOwner && (
           <Link href={`/seeds/${seed.id}/edit`} className="project-top__edit">
@@ -128,6 +131,11 @@ export default async function SeedPage({
               <div className="bet__actions">
                 <form action={shipSeed}>
                   <input type="hidden" name="project_id" value={seed.id} />
+                  <input
+                    type="url"
+                    name="ship_url"
+                    placeholder="https://… live site (optional)"
+                  />
                   <button className="btn btn--ship" type="submit">
                     Ship it
                   </button>
