@@ -62,3 +62,10 @@ export async function requireLauncher() {
   }
   return { supabase, user };
 }
+
+// Auth while the swell warms up: GitHub is the public front door and stays
+// open to everyone. Email sign-in and registration sit behind
+// SEEDSWELL_EMAIL_SIGNIN=true and are off otherwise — fail closed.
+export function emailSigninOpen() {
+  return process.env.SEEDSWELL_EMAIL_SIGNIN === "true";
+}

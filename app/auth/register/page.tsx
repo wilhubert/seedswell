@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { continueWithGitHub, registerWithEmail } from "../actions";
 import { authErrorMessage } from "../errors";
+import { emailSigninOpen } from "@/lib/supabase-server";
 import "../auth.css";
 
 export const dynamic = "force-dynamic";
@@ -19,12 +20,22 @@ export default async function RegisterPage({
 }) {
   const search = await searchParams;
   const errorMessage = authErrorMessage(search, ERROR_MESSAGES);
+  // GitHub is the public front door; while email registration sits behind
+  // the toggle, the email form is absent.
+  const closed = !emailSigninOpen();
 
   return (
     <main className="auth">
       <h1>Register</h1>
       {errorMessage && <p className="auth__error">{errorMessage}</p>}
-      <form action={registerWithEmail} className="auth__form">
+      {closed && (
+        <p className="auth__notice">
+          Continue with GitHub below — email registration is switched off
+          for the moment.
+        </p>
+      )}
+      {!closed && (
+        <form action={registerWithEmail} className="auth__form">
         <label>
           Username
           <input
@@ -46,17 +57,20 @@ export default async function RegisterPage({
           Register
         </button>
       </form>
-      <p className="auth__divider">or</p>
+      )}
+      {!closed && <p className="auth__divider">or</p>}
       <form action={continueWithGitHub}>
         <button className="btn btn--github" type="submit">
           Continue with GitHub
         </button>
       </form>
-      <p className="auth__alt">
-        Already registered?{" "}
-        <Link href="/auth/login">Log in</Link>. Email registration is all a
-        watcher needs — GitHub is only needed to connect a repo.
-      </p>
+      {!closed && (
+        <p className="auth__alt">
+          Already registered?{" "}
+          <Link href="/auth/login">Log in</Link>. Email registration is all a
+          watcher needs — GitHub is only needed to connect a repo.
+        </p>
+      )}
     </main>
   );
 }

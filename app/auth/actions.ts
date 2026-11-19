@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { createSupabaseServerClient, emailSigninOpen } from "@/lib/supabase-server";
 
 const USERNAME_RE = /^[a-z0-9-]{3,30}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,6 +45,12 @@ export async function continueWithGitHub(formData: FormData) {
 }
 
 export async function loginWithEmail(formData: FormData) {
+  // Email sign-in is behind the toggle; the login page stops showing
+  // the form, this is the enforcement point for direct POSTs.
+  if (!emailSigninOpen()) {
+    redirect("/auth/login?closed");
+  }
+
   const next = safeNext(String(formData.get("next") ?? "/"));
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
@@ -90,6 +96,10 @@ export async function loginWithEmail(formData: FormData) {
 }
 
 export async function resendConfirmationEmail(formData: FormData) {
+  if (!emailSigninOpen()) {
+    redirect("/auth/login?closed");
+  }
+
   const email = String(formData.get("email") ?? "").trim();
   if (!EMAIL_RE.test(email)) {
     redirect("/auth/login?error=invalid");
@@ -111,6 +121,12 @@ export async function resendConfirmationEmail(formData: FormData) {
 }
 
 export async function registerWithEmail(formData: FormData) {
+  // Email registration is behind the toggle; same wall the register page
+  // shows, enforced against direct POSTs.
+  if (!emailSigninOpen()) {
+    redirect("/auth/register?closed");
+  }
+
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const username = String(formData.get("username") ?? "").trim();

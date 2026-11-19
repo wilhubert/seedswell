@@ -5,6 +5,7 @@ import {
   resendConfirmationEmail,
 } from "../actions";
 import { authErrorMessage } from "../errors";
+import { emailSigninOpen } from "@/lib/supabase-server";
 import "../auth.css";
 
 export const dynamic = "force-dynamic";
@@ -41,11 +42,20 @@ export default async function LoginPage({
   const needsConfirmation = "confirm-email" in search;
   const nextRaw = typeof search.next === "string" ? search.next : "/";
   const next = nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/";
+  // GitHub is the public front door; while email sign-in sits behind the
+  // toggle, the email form and register link are absent.
+  const closed = !emailSigninOpen();
 
   return (
     <main className="auth">
       <h1>Log in</h1>
       {errorMessage && <p className="auth__error">{errorMessage}</p>}
+      {closed && (
+        <p className="auth__notice">
+          Continue with GitHub below — email sign-in is switched off for
+          the moment.
+        </p>
+      )}
       {notices.map((key) => (
         <p className="auth__notice" key={key}>
           {NOTICES[key]}
@@ -53,7 +63,7 @@ export default async function LoginPage({
       ))}
       {/* A lost first confirmation email otherwise dead-ends an account
           forever: repeat signups never re-send. */}
-      {needsConfirmation && (
+      {needsConfirmation && !closed && (
         <form action={resendConfirmationEmail} className="auth__form">
           <label>
             Lost the confirmation email?
@@ -64,20 +74,22 @@ export default async function LoginPage({
           </button>
         </form>
       )}
-      <form action={loginWithEmail} className="auth__form">
-        <input type="hidden" name="next" value={next} />
-        <label>
-          Email
-          <input name="email" type="email" required />
-        </label>
-        <label>
-          Password
-          <input name="password" type="password" required />
-        </label>
-        <button className="btn" type="submit">
-          Log in
-        </button>
-      </form>
+      {!closed && (
+        <form action={loginWithEmail} className="auth__form">
+          <input type="hidden" name="next" value={next} />
+          <label>
+            Email
+            <input name="email" type="email" required />
+          </label>
+          <label>
+            Password
+            <input name="password" type="password" required />
+          </label>
+          <button className="btn" type="submit">
+            Log in
+          </button>
+        </form>
+      )}
       <p className="auth__divider">or</p>
       <form action={continueWithGitHub}>
         <input type="hidden" name="next" value={next} />
@@ -85,13 +97,15 @@ export default async function LoginPage({
           Continue with GitHub
         </button>
       </form>
-      <p className="auth__alt">
-        No account yet?{" "}
-        <Link href={`/auth/register?next=${encodeURIComponent(next)}`}>
-          Register with email
-        </Link>{" "}
-        — you only need one to watch seeds and launch your own.
-      </p>
+      {!closed && (
+        <p className="auth__alt">
+          No account yet?{" "}
+          <Link href={`/auth/register?next=${encodeURIComponent(next)}`}>
+            Register with email
+          </Link>{" "}
+          — you only need one to watch seeds and launch your own.
+        </p>
+      )}
     </main>
   );
 }
