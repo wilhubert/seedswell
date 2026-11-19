@@ -2,13 +2,15 @@
 
 import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
-import { requireUser } from "@/lib/supabase-server";
+import { requireLauncher } from "@/lib/supabase-server";
 
 const NAME_MAX = 80;
 const TAGLINE_MAX = 200;
 
-export async function plantSeed(formData: FormData) {
-  const { supabase, user } = await requireUser();
+export async function launchSeed(formData: FormData) {
+  // The page already walls off visitors who can't launch; this is the
+  // enforcement point.
+  const { supabase, user } = await requireLauncher();
 
   const name = String(formData.get("name") ?? "").trim();
   const tagline = String(formData.get("tagline") ?? "").trim();

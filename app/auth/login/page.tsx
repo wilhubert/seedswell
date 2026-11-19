@@ -90,7 +90,7 @@ export default async function LoginPage({
         <Link href={`/auth/register?next=${encodeURIComponent(next)}`}>
           Register with email
         </Link>{" "}
-        — you only need one to watch seeds and plant your own.
+        — you only need one to watch seeds and launch your own.
       </p>
     </main>
   );

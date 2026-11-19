@@ -6,7 +6,7 @@ import { requireUser } from "@/lib/supabase-server";
 
 const DAY_MS = 86_400_000;
 
-// Same field rules as the plant form: editing is for fixing story and
+// Same field rules as the launch form: editing is for fixing story and
 // identity, never for moving the called date.
 const NAME_MAX = 80;
 const TAGLINE_MAX = 200;

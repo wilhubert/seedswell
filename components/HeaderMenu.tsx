@@ -35,7 +35,7 @@ export default function HeaderMenu({ username }: HeaderMenuProps) {
           <Link href="/" onClick={close}>
             seed board
           </Link>
-          <Link href="/seeds/new" onClick={close}>
+          <Link href="/auth/register" onClick={close}>
             join the swell
           </Link>
           {username && (

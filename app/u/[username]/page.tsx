@@ -3,6 +3,7 @@ import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
 import { counterLabel } from "@/lib/board";
 import { getProfileByUsername, getSeedsForUser } from "@/lib/seeds";
+import { canLaunchSeeds } from "@/lib/supabase-server";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import "./profile.css";
 
@@ -26,6 +27,9 @@ export default async function ProfilePage({
     data: { user },
   } = await supabase.auth.getUser();
   const isSelf = !!user && user.id === profile.id;
+  // Soft launch: only allowlisted emails may launch, so the plus stays hidden
+  // from everyone else — anonymous visitors included.
+  const canLaunch = canLaunchSeeds(user);
 
   return (
     <main className="profile-grid">
@@ -62,7 +66,7 @@ export default async function ProfilePage({
       <section className="seeds-col">
         <h2 className="seeds-col__head">SEEDS</h2>
         {seeds.length === 0 ? (
-          <p className="seeds-col__empty">No seeds planted yet.</p>
+          <p className="seeds-col__empty">No seeds launched yet.</p>
         ) : (
           seeds.map((seed) => (
             <SeedRow
@@ -78,9 +82,11 @@ export default async function ProfilePage({
             />
           ))
         )}
-        <a className="plant-seed" href="/seeds/new" aria-label="Plant a seed">
-          +
-        </a>
+        {canLaunch && (
+          <a className="launch-seed" href="/seeds/new" aria-label="Launch a seed">
+            +
+          </a>
+        )}
       </section>
     </main>
   );

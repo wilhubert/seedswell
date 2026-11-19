@@ -42,3 +42,23 @@ export async function requireUser() {
   }
   return { supabase, user };
 }
+
+// The public share is soft-launched: anyone can view, register and watch,
+// but launching is invite-only for now. SEEDSWELL_LAUNCHERS holds the
+// comma-separated emails that may still launch; fail closed — unset
+// means nobody launches, not everybody.
+export function canLaunchSeeds(user: { email?: string | null } | null) {
+  const launchers = (process.env.SEEDSWELL_LAUNCHERS ?? "")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+  return !!user?.email && launchers.includes(user.email.toLowerCase());
+}
+
+export async function requireLauncher() {
+  const { supabase, user } = await requireUser();
+  if (!canLaunchSeeds(user)) {
+    redirect("/");
+  }
+  return { supabase, user };
+}

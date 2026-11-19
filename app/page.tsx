@@ -19,19 +19,21 @@ export default async function Home() {
   return (
     <main>
       <section className="hero">
-        <h1>Fresh swell! New ideas seeded today.</h1>
+        <h1>Fresh swell! New ideas launched today.</h1>
         <p className="hero__sub">
         Launch in front of users from day one. Be there when the next big thing pops up. 🏄
         </p>
-        <a className="btn btn--join" href="/seeds/new">
+        {/* Soft launch: registering an account to watch is open to
+            everyone; launching stays invite-only at /seeds/new. */}
+        <a className="btn btn--join" href="/auth/register">
           Join the swell
         </a>
-        <p className="promo">The first 100 seeds are on me!</p>
+        {/* <p className="promo">The first 100 seeds are on me!</p> */}
       </section>
       <section className="board">
         {seeds.length === 0 ? (
           <p className="board__empty">
-            Nothing planted yet — be the first seed on the board.
+            Nothing launched yet — be the first seed on the board.
           </p>
         ) : (
           seeds.map((seed) => (
