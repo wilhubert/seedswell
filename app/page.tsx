@@ -1,3 +1,4 @@
+import JoinSwellButton from "@/components/JoinSwellButton";
 import SeedRow from "@/components/SeedRow";
 import WatchButton from "@/components/WatchButton";
 import { counterLabel, counterStack } from "@/lib/board";
@@ -25,9 +26,7 @@ export default async function Home() {
         </p>
         {/* Soft launch: registering an account to watch is open to
             everyone; launching stays invite-only at /seeds/new. */}
-        <a className="btn btn--join" href="/auth/register">
-          Join the swell
-        </a>
+        <JoinSwellButton />
         {/* <p className="promo">The first 100 seeds are on me!</p> */}
       </section>
       <section className="board">

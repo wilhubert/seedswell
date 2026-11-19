@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@vercel/analytics";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -35,7 +36,13 @@ export default function HeaderMenu({ username }: HeaderMenuProps) {
           <Link href="/" onClick={close}>
             seed board
           </Link>
-          <Link href="/auth/register" onClick={close}>
+          <Link
+            href="/auth/register"
+            onClick={() => {
+              close();
+              track("join_the_swell");
+            }}
+          >
             join the swell
           </Link>
           {username && (

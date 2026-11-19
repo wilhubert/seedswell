@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import Header from "@/components/Header";
 import "./globals.css";
 
@@ -25,6 +26,9 @@ export default function RootLayout({
       <body>
         <Header />
         {children}
+        {/* Vercel Web Analytics: page views here, custom events via
+            track() from client components (see JoinSwellButton). */}
+        <Analytics />
       </body>
     </html>
   );
