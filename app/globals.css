@@ -4,11 +4,11 @@
   --panel: #292a2e;
   --panel-deep: #333333;
   --line: #7da2ba;
-  --header-line: #2b2a29;
   --ink: #ffffff;
   --muted: #b1b1b1;
   --blue: #8fc8ee;
   --blue-light: #d1e8f8;
+  --coral-highlight: #ff7a59;
 }
 
 *,
@@ -21,6 +21,10 @@
 html {
   color-scheme: dark;
 }
+
+/* .coral-highlight {
+  color: var(--coral-highlight);
+} */
 
 body {
   background: var(--bg);
@@ -57,7 +61,7 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 0 45px;
-  border-bottom: 0.5px solid var(--header-line);
+  border-bottom: 0.5px solid var(--panel);
 }
 
 .brand {
@@ -227,7 +231,7 @@ a {
 .seed-row__time .seed-row__time-num {
   font-size: 26.6px;
   line-height: 26.6px;
-  color: var(--ink);
+  color: var(--coral-highlight);
   font-weight: 600;
 }
 

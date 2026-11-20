@@ -13,7 +13,7 @@ export default function JoinSwellButton() {
       href="/auth/register"
       onClick={() => track("join_the_swell")}
     >
-      Join the swell
+      Start my countdown
     </a>
   );
 }

@@ -1,7 +1,6 @@
 .hero {
   text-align: center;
   padding: 90px 24px 90px;
-  background-color: var(--header-line);
 }
 
 .hero h1 {
@@ -18,9 +17,13 @@
 }
 
 /* Sentence spans of the sub-line: inline on desktop (one flowing line),
-   stacked by the mobile media query so the second sentence starts
-   fresh on its own line. */
+   stacked by the mobile media query so "Ride this swell to the top."
+   starts fresh on its own line. */
 .hero__sub-line {
+  display: inline;
+}
+
+.hero__sub-tail {
   display: inline;
 }
 
@@ -34,7 +37,6 @@
   border: none;
   border-radius: 10px;
   background: var(--blue);
-  padding: 0 62px;
   font-weight: 700;
   font-size: 20px;
 }
@@ -67,12 +69,6 @@
   margin-inline: auto;
 }
 
-.decorative-beach-items {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-}
-
 /* Mobile (Figma "Mobile-dark-seed" 402px frame) */
 @media (max-width: 520px) {
   /* The smaller hero makes room for the beach again, at 80% of its
@@ -88,15 +84,26 @@
   }
 
   .hero h1 {
-    font-size: 34px;
+    font-size: clamp(30px, 8vw, 56px);
+    line-height: 1.1;
+    text-wrap: balance;
+    margin: 0;
   }
 
+
+
   .hero__sub {
-    margin-top: 14px;
-    font-size: 14px;
+    font-size: 17px;
+    line-height: 1.5;
+    margin: 16px 0 0;
+    opacity: 0.8;
   }
 
   .hero__sub-line {
+    display: block;
+  }
+
+  .hero__sub-tail {
     display: block;
   }
 
@@ -104,7 +111,7 @@
     min-width: 120px;
     height: 36px;
     margin-top: 38px;
-    padding: 0;
+    padding: 0 20px;
     border-radius: 7px;
     font-size: 14px;
     color: #000;
