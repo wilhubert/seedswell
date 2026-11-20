@@ -1,6 +1,7 @@
 .hero {
   text-align: center;
-  padding: 170px 24px 0;
+  padding: 90px 24px 90px;
+  background-color: var(--header-line);
 }
 
 .hero h1 {
@@ -12,8 +13,19 @@
 .hero__sub {
   margin-top: 14px;
   font-weight: 400;
-  font-size: 20px;
+  font-size: 18px;
   color: var(--muted);
+}
+
+/* Sentence spans of the sub-line: inline on desktop (one flowing line),
+   stacked by the mobile media query so the second sentence starts
+   fresh on its own line. */
+.hero__sub-line {
+  display: inline;
+}
+
+.hero__surf {
+  display: none;
 }
 
 .btn--join {
@@ -49,10 +61,30 @@
   padding: 40px 0;
 }
 
+.test {
+  position: relative;
+  width: fit-content;
+  margin-inline: auto;
+}
+
+.decorative-beach-items {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
 /* Mobile (Figma "Mobile-dark-seed" 402px frame) */
 @media (max-width: 520px) {
+  /* The smaller hero makes room for the beach again, at 80% of its
+     desktop size (60×54 → 48×43.2). The surf emoji stands down while
+     the svg is on. */
+  .decorative-beach-items {
+    width: 48px;
+    height: 43.2px;
+  }
+
   .hero {
-    padding: 70px 25px 0;
+    padding: 40px 25px 40px;
   }
 
   .hero h1 {
@@ -61,14 +93,18 @@
 
   .hero__sub {
     margin-top: 14px;
-    font-size: 15px;
+    font-size: 14px;
+  }
+
+  .hero__sub-line {
+    display: block;
   }
 
   .btn--join {
-    min-width: 170px;
+    min-width: 120px;
     height: 36px;
     margin-top: 38px;
-    padding: 0 24px;
+    padding: 0;
     border-radius: 7px;
     font-size: 14px;
     color: #000;

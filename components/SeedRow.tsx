@@ -50,11 +50,11 @@ export default function SeedRow({
                 on the number's baseline. The aria-hidden label above
                 carries the full day X/30 · N to go reading. */}
             <span className="seed-row__counter-stack">
-              <span className="seed-row__time seed-row__time--day">
+              <span className="seed-row__time">
                 <span className="seed-row__time-num">{counterStack.days}</span>
                 <span className="seed-row__time-unit">D</span>
               </span>
-              <span className="seed-row__time seed-row__time--hour">
+              <span className="seed-row__time">
                 <span className="seed-row__time-num">
                   {counterStack.hours}
                 </span>

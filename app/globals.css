@@ -1,10 +1,10 @@
 :root {
   --bg: #1a1a1a;
   --card: #232323;
-  --panel: #2b2b2b;
+  --panel: #292a2e;
   --panel-deep: #333333;
   --line: #7da2ba;
-  --header-line: #464646;
+  --header-line: #2b2a29;
   --ink: #ffffff;
   --muted: #b1b1b1;
   --blue: #8fc8ee;
@@ -57,7 +57,7 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 0 45px;
-  border-bottom: 1px solid var(--header-line);
+  border-bottom: 0.5px solid var(--header-line);
 }
 
 .brand {
@@ -213,38 +213,28 @@ a {
 .seed-row__counter-stack {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1.9px;
   font-family: "Red Hat Mono", ui-monospace, monospace;
   letter-spacing: -0.03em;
 }
 
-/* Time-dark: two number rows with their letter units hanging on the
-   number's baseline — the day row carries the weight (700), the hours
-   row reads lighter (400), the units mute out (#B1B1B1). */
 .seed-row__time {
   display: inline-flex;
   align-items: baseline;
-  gap: 3px;
+  gap: 2.85px;
 }
 
 .seed-row__time .seed-row__time-num {
-  font-size: 28px;
-  line-height: 28px;
+  font-size: 26.6px;
+  line-height: 26.6px;
   color: var(--ink);
-}
-
-.seed-row__time--day .seed-row__time-num {
-  font-weight: 700;
-}
-
-.seed-row__time--hour .seed-row__time-num {
-  font-weight: 400;
+  font-weight: 600;
 }
 
 .seed-row__time .seed-row__time-unit {
-  font-size: 15.2px;
+  font-size: 14.44px;
   font-weight: 400;
-  line-height: 20px;
+  line-height: 19px;
   color: var(--muted);
 }
 
@@ -295,10 +285,10 @@ a {
   height: 30px;
 }
 
-.seed-row:not(.seed-row--card) .seed-row__owner {
-  font-size: 11px;
-  font-weight: 400;
-  color: var(--ink);
+@media (max-width: 520px) {
+  .seed-row:not(.seed-row--card) .seed-row__owner {
+    font-size: 11px;
+  }
 }
 
 .seed-row:not(.seed-row--card) .seed-row__counter {
@@ -410,7 +400,7 @@ a {
   .site-header {
     height: 66px;
     padding: 0 26px;
-    border-bottom: 0.5px solid #e2e2e2;
+    border-bottom: 0.5px solid var(--panel);
   }
 
   .brand {
