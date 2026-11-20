@@ -3,13 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import { requireUser } from "@/lib/supabase-server";
-
-const DAY_MS = 86_400_000;
-
-// Same field rules as the launch form: editing is for fixing story and
-// identity, never for moving the called date.
-const NAME_MAX = 80;
-const TAGLINE_MAX = 200;
+import { dayNumber } from "@/lib/board";
+import { seedIdentityOk } from "@/lib/seed-fields";
 
 export async function editSeed(formData: FormData) {
   const projectId = String(formData.get("project_id") ?? "");
@@ -32,11 +27,7 @@ export async function editSeed(formData: FormData) {
   const tagline = String(formData.get("tagline") ?? "").trim();
   const logoUrl = String(formData.get("logo_url") ?? "").trim();
 
-  const nameOk = name.length >= 1 && name.length <= NAME_MAX;
-  const taglineOk = tagline.length <= TAGLINE_MAX;
-  const logoOk = logoUrl === "" || /^https?:\/\//.test(logoUrl);
-
-  if (!nameOk || !taglineOk || !logoOk) {
+  if (!seedIdentityOk(name, tagline, logoUrl)) {
     redirect(`/seeds/${projectId}/edit?error=invalid`);
   }
 
@@ -87,10 +78,7 @@ export async function shipSeed(formData: FormData) {
     redirect(`/seeds/${projectId}?error=invalid-url`);
   }
 
-  const shipDays =
-    Math.floor(
-      (Date.now() - new Date(project.planted_at).getTime()) / DAY_MS
-    ) + 1;
+  const shipDays = dayNumber(project.planted_at);
 
   const { error } = await supabase
     .from("projects")

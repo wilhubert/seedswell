@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
 import WatchButton from "@/components/WatchButton";
-import { counterLabel } from "@/lib/board";
+import { counterLabel, counterStack } from "@/lib/board";
 import { getSeedWithLog, isWatching } from "@/lib/seeds";
 import { getOwnWebhookSecret } from "@/lib/secrets";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
@@ -80,6 +80,7 @@ export default async function SeedPage({
           name={seed.name}
           owner={seed.owner}
           counter={counterLabel(seed)}
+          counterStack={counterStack(seed)}
           pushes={seed.pushCount}
           logoUrl={seed.logoUrl}
           avatarUrl={seed.avatarUrl}

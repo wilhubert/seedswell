@@ -141,9 +141,7 @@ export async function getSeedWithLog(
 ): Promise<{ seed: Seed; commits: Commit[] } | null> {
   const { data: row, error } = await getSupabase()
     .from("projects")
-    .select(
-      "id, user_id, name, tagline, logo_url, planted_at, target_days, push_count, shipped_at, ship_days, ship_url, connected_at, watchers(count), profiles!projects_user_id_fkey(username, avatar_url)"
-    )
+    .select(SEED_SELECT)
     .eq("id", id)
     .maybeSingle();
 

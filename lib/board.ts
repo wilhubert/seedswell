@@ -16,15 +16,22 @@ export type Seed = {
   watchCount: number;
 };
 
-const DAY_MS = 86_400_000;
+export const DAY_MS = 86_400_000;
 const HOUR_MS = 3_600_000;
+
+// The day number a seed is on: day 1 runs from planting through the first
+// 24h. Shared by the counter and the ship receipt, which "records the
+// true day number, late or not".
+export function dayNumber(plantedAt: Date | string): number {
+  return Math.floor((Date.now() - new Date(plantedAt).getTime()) / DAY_MS) + 1;
+}
 
 // The `day N/30 · X to go` counter is always computed, never stored.
 export function counterLabel(seed: Seed): string {
   if (seed.shippedAt) {
     return `shipped · ${seed.shipDays} days`;
   }
-  const day = Math.floor((Date.now() - seed.plantedAt.getTime()) / DAY_MS) + 1;
+  const day = dayNumber(seed.plantedAt);
   const remainingMs =
     seed.plantedAt.getTime() + seed.targetDays * DAY_MS - Date.now();
   const toGo = Math.max(Math.ceil(remainingMs / DAY_MS), 0);

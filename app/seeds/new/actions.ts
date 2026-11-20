@@ -3,9 +3,7 @@
 import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
 import { requireLauncher } from "@/lib/supabase-server";
-
-const NAME_MAX = 80;
-const TAGLINE_MAX = 200;
+import { seedIdentityOk } from "@/lib/seed-fields";
 
 export async function launchSeed(formData: FormData) {
   // The page already walls off visitors who can't launch; this is the
@@ -17,14 +15,11 @@ export async function launchSeed(formData: FormData) {
   const logoUrl = String(formData.get("logo_url") ?? "").trim();
   const targetDays = Number(formData.get("target_days"));
 
-  const nameOk = name.length >= 1 && name.length <= NAME_MAX;
-  const taglineOk = tagline.length <= TAGLINE_MAX;
-  const hasLogo = logoUrl !== "";
-  const logoOk = !hasLogo || /^https?:\/\//.test(logoUrl);
+  const identityOk = seedIdentityOk(name, tagline, logoUrl);
   const daysOk =
     Number.isInteger(targetDays) && targetDays >= 1 && targetDays <= 30;
 
-  if (!nameOk || !taglineOk || !logoOk || !daysOk) {
+  if (!identityOk || !daysOk) {
     redirect("/seeds/new?error=invalid");
   }
 

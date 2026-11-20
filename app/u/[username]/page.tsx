@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
-import { counterLabel } from "@/lib/board";
+import { counterLabel, counterStack } from "@/lib/board";
 import { getProfileByUsername, getSeedsForUser } from "@/lib/seeds";
 import { canLaunchSeeds } from "@/lib/supabase-server";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
@@ -75,6 +75,7 @@ export default async function ProfilePage({
               name={seed.name}
               owner={seed.owner}
               counter={counterLabel(seed)}
+              counterStack={counterStack(seed)}
               pushes={seed.pushCount}
               logoUrl={seed.logoUrl}
               avatarUrl={seed.avatarUrl}
