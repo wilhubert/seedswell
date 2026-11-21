@@ -17,7 +17,7 @@
   padding: 37px 41px 47px;
   display: flex;
   flex-direction: column;
-  gap: 35px;
+  gap: 50px;
 }
 
 .profile-card__id {
@@ -36,8 +36,8 @@
 }
 
 .profile-card__name {
-  font-size: 40px;
-  font-weight: 700;
+  font-size: 34px;
+  font-weight: 400;
   line-height: 52px;
   overflow-wrap: anywhere;
 }
@@ -47,31 +47,54 @@
   line-height: 26px;
 }
 
+/* Every Figma variant of this row keeps 44px between chips (follow:
+   145→333, owner: 145→303 measured on the 111px-offset frame). */
 .profile-card__links {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 44px;
 }
 
-/* Figma "Follow on" / "Visit on": light-grey chips, black text; both sit
-   under the bio on one row. */
+/* Figma "Follow on" / "Visit on" (Rectangles 75/76): grey chips, black
+   text, 5px corners. */
 .btn--x,
 .btn--github {
   gap: 8px;
   height: 37px;
   padding: 0 12px;
   border: none;
-  border-radius: 3.5px;
-  background: #d3d9dc;
+  border-radius: 5px;
+  background: #ffffff;
   color: #000;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 26px;
+}
+
+.btn--x:hover,
+.btn--github:hover {
+  background: #ffffff;
+}
+
+/* Figma "profile-button" (Rectangle 75, owner row): the account actions
+   occupy the same chip slot as the follow buttons — same geometry — but
+   keep the card's darkness with a grey outline and grey text, so they
+   sit quieter than the visitor's filled chips. */
+.btn--chip {
+  height: 37px;
+  padding: 0 12px;
+  border: 0.5px solid #ffffff;
+  border-radius: 5px;
+  line-height: 26px;
+  background: #2b2b2b;
+  color: #ffffff;
   font-weight: 400;
   font-size: 20px;
 }
 
-.btn--x svg,
-.btn--github svg {
-  width: 18px;
-  height: 18px;
+.btn--chip:hover {
+  background: #ffffff;
+  color: #2b2b2b;
 }
 
 .profile-card__error {
@@ -84,12 +107,24 @@
   font-size: 15px;
 }
 
-/* Owner-only editor, folded behind the summary at rest. Same field look
-   as the launch form. */
+/* Owner-only editor. display:contents flattens the details into the
+   links row: the summary reads as a chip next to "watching", while the
+   open form claims a full row via flex-wrap. Same field look as the
+   launch form. */
+.profile-card__edit {
+  display: contents;
+}
+
 .profile-card__edit summary {
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 15px;
+  list-style: none;
+}
+
+.profile-card__edit summary::-webkit-details-marker {
+  display: none;
+}
+
+.profile-card__edit[open] .profile-edit__form {
+  flex-basis: 100%;
 }
 
 .profile-edit__form {
@@ -133,6 +168,7 @@
   display: flex;
   flex-direction: column;
   gap: 39px;
+  box-shadow: none;
 }
 
 /* Figma "Rectangle 77": the SEEDS bar carrying the heading. */
@@ -202,12 +238,18 @@
     background: rgba(217, 217, 217, 0.21);
   }
 
-  .profile-grid .seed-row:not(.seed-row--card) .seed-row__time .seed-row__time-num {
+  .profile-grid
+    .seed-row:not(.seed-row--card)
+    .seed-row__time
+    .seed-row__time-num {
     font-size: 29.06px;
     line-height: 38px;
   }
 
-  .profile-grid .seed-row:not(.seed-row--card) .seed-row__time .seed-row__time-unit {
+  .profile-grid
+    .seed-row:not(.seed-row--card)
+    .seed-row__time
+    .seed-row__time-unit {
     font-size: 15.6px;
   }
 }
@@ -238,7 +280,8 @@
   }
 
   .btn--x,
-  .btn--github {
+  .btn--github,
+  .btn--chip {
     height: 30px;
     padding: 0 10px;
     font-size: 15px;

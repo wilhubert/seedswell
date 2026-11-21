@@ -23,16 +23,36 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 function XLogo() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zM17.083 19.77h1.833L7.084 4.126H5.117z" />
+    <svg
+      width="23"
+      height="23"
+      viewBox="0 0 23 23"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M13.1026 9.52695L21.2985 0H19.3563L12.24 8.27235L6.55605 0H0L8.595 12.5091L0 22.5H1.9422L9.4572 13.7637L15.4602 22.5H22.0163L13.1026 9.52695ZM10.4423 12.6194L9.5715 11.3738L2.64195 1.46205H5.62545L11.2176 9.4608L12.0883 10.7064L19.3572 21.1041H16.3737L10.4423 12.6194Z"
+        fill="#1E1E1E"
+      />
     </svg>
   );
 }
 
 function GitHubMark() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+    <svg
+      width="20"
+      height="19"
+      viewBox="0 0 20 19"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M9.6768 0C4.33037 0 0 4.33037 0 9.6768C0 13.9588 2.76998 17.5755 6.61651 18.8577C7.10035 18.9423 7.28179 18.652 7.28179 18.398C7.28179 18.1682 7.2697 17.4061 7.2697 16.5957C4.8384 17.0433 4.20941 16.003 4.01587 15.4587C3.90701 15.1805 3.43526 14.3217 3.024 14.0918C2.68531 13.9104 2.20147 13.4628 3.0119 13.4508C3.77395 13.4387 4.31827 14.1523 4.49971 14.4426C5.37062 15.9062 6.76166 15.495 7.31808 15.241C7.40275 14.612 7.65677 14.1886 7.93498 13.9467C5.78189 13.7048 3.53203 12.8701 3.53203 9.16877C3.53203 8.11642 3.90701 7.2455 4.5239 6.56813C4.42714 6.32621 4.08845 5.33434 4.62067 4.00378C4.62067 4.00378 5.4311 3.74976 7.28179 4.99565C8.05594 4.77792 8.87846 4.66906 9.70099 4.66906C10.5235 4.66906 11.346 4.77792 12.1202 4.99565C13.9709 3.73766 14.7813 4.00378 14.7813 4.00378C15.3135 5.33434 14.9748 6.32621 14.8781 6.56813C15.495 7.2455 15.87 8.10432 15.87 9.16877C15.87 12.8822 13.608 13.7048 11.4549 13.9467C11.8057 14.2491 12.1081 14.8297 12.1081 15.7369C12.1081 17.0312 12.096 18.0714 12.096 18.398C12.096 18.652 12.2774 18.9544 12.7613 18.8577C16.5836 17.5755 19.3536 13.9467 19.3536 9.6768C19.3536 4.33037 15.0232 0 9.6768 0Z"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        fill="#1E1E1E"
+      />
     </svg>
   );
 }
@@ -91,9 +111,12 @@ export default async function ProfilePage({
         </div>
         {profile.bio && <p className="profile-card__bio">{profile.bio}</p>}
         <div className="profile-card__links">
-          {/* The X handle is profile content (set by hand for now, like
-              bio); the button exists only when it holds a value. */}
-          {profile.xHandle && (
+          {/* Platform chips are for visitors; the owner gets account
+              actions instead — watching is one click away, and the
+              edit chip unfolds the form on its own row below. The
+              form still writes bio and x_handle to the signed-in
+              user's own row only. */}
+          {!isSelf && profile.xHandle && (
             <a
               className="btn btn--x"
               href={`https://x.com/${profile.xHandle}`}
@@ -106,7 +129,7 @@ export default async function ProfilePage({
           )}
           {/* GitHub always provides an avatar at sign-in; email users have
               none, so this link exists only for GitHub-registered users. */}
-          {profile.avatarUrl && (
+          {!isSelf && profile.avatarUrl && (
             <a
               className="btn btn--github"
               href={`https://github.com/${profile.username}`}
@@ -118,42 +141,39 @@ export default async function ProfilePage({
             </a>
           )}
           {isSelf && (
-            <Link className="btn btn--ghost" href="/watching">
-              watching
-            </Link>
+            <>
+              <Link className="btn btn--chip" href="/watching">
+                watching
+              </Link>
+              <details className="profile-card__edit">
+                <summary className="btn btn--chip">edit profile</summary>
+                <form className="profile-edit__form" action={editProfile}>
+                  <label>
+                    Bio
+                    <textarea
+                      name="bio"
+                      defaultValue={profile.bio ?? ""}
+                      rows={3}
+                      maxLength={280}
+                      placeholder="a short description of your interests"
+                    />
+                  </label>
+                  <label>
+                    X handle
+                    <input
+                      name="x_handle"
+                      defaultValue={profile.xHandle ?? ""}
+                      placeholder="handle, with or without @"
+                    />
+                  </label>
+                  <button className="btn btn--ghost" type="submit">
+                    save
+                  </button>
+                </form>
+              </details>
+            </>
           )}
         </div>
-        {isSelf && (
-          /* Owner-only editor, folded to keep the card at rest; the
-             action writes bio and x_handle to the signed-in user's own
-             row only. */
-          <details className="profile-card__edit">
-            <summary>edit profile</summary>
-            <form className="profile-edit__form" action={editProfile}>
-              <label>
-                Bio
-                <textarea
-                  name="bio"
-                  defaultValue={profile.bio ?? ""}
-                  rows={3}
-                  maxLength={280}
-                  placeholder="a short description of your interests"
-                />
-              </label>
-              <label>
-                X handle
-                <input
-                  name="x_handle"
-                  defaultValue={profile.xHandle ?? ""}
-                  placeholder="handle, with or without @"
-                />
-              </label>
-              <button className="btn btn--ghost" type="submit">
-                save
-              </button>
-            </form>
-          </details>
-        )}
       </section>
       <section className="seeds-col">
         <h2 className="seeds-col__head">SEEDS</h2>

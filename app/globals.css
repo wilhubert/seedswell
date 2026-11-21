@@ -3,7 +3,7 @@
   --card: #232323;
   --panel: #292a2e;
   --panel-deep: #333333;
-  --line: #7da2ba;
+  --line: #4b6272;
   --ink: #ffffff;
   --muted: #b1b1b1;
   --blue: #8fc8ee;
@@ -406,6 +406,19 @@ a {
 .btn--ghost {
   background: transparent;
   color: var(--blue);
+}
+
+/* Header "login"/"log out" (Figma "Rectangle 83"): a dark chip with a
+   fine grey outline that sits quietly in the bar instead of the loud
+   blue-light action button. */
+.btn--header {
+  border: 0.88px solid #3b3b3b;
+  border-radius: 5px;
+  background: #2b2b2b;
+  color: #fff;
+  font-size: 14.75px;
+  line-height: 19px;
+  padding: 0 21px;
 }
 
 .btn--watch {
