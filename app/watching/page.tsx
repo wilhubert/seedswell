@@ -1,6 +1,6 @@
 import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
-import { counterLabel, counterStack } from "@/lib/board";
+import { counterLabel, counterStack, seedStatus } from "@/lib/board";
 import { getWatchedProjectIds, getSeedsByIds } from "@/lib/seeds";
 import { requireUser } from "@/lib/supabase-server";
 import "./watching.css";
@@ -38,6 +38,7 @@ export default async function WatchingPage() {
                   owner={seed.owner}
                   counter={counterLabel(seed)}
                   counterStack={counterStack(seed)}
+                  status={seedStatus(seed)}
                   pushes={seed.pushCount}
                   logoUrl={seed.logoUrl}
                   avatarUrl={seed.avatarUrl}

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { boardOrder, counterLabel, type Seed } from "../lib/board.ts";
+import { boardOrder, counterLabel, seedStatus, type Seed } from "../lib/board.ts";
 
 const DAY_MS = 86_400_000;
 
@@ -52,6 +52,35 @@ test("counter shows the ship receipt", () => {
     shipDays: 22,
   });
   assert.equal(counterLabel(seed), "shipped · 22 days");
+});
+
+test("status reads building while the date is ahead", () => {
+  const seed = makeSeed({ plantedAt: new Date(Date.now() - 12.5 * DAY_MS) });
+  assert.equal(seedStatus(seed), "building");
+});
+
+test("status reads dropped once the date passes without shipping", () => {
+  const seed = makeSeed({ plantedAt: new Date(Date.now() - 30.5 * DAY_MS) });
+  assert.equal(seedStatus(seed), "dropped");
+});
+
+test("status reads built when the ship landed inside the window", () => {
+  const seed = makeSeed({
+    plantedAt: new Date(Date.now() - 6.5 * DAY_MS),
+    targetDays: 30,
+    shippedAt: new Date(Date.now() - 0.5 * DAY_MS),
+    shipDays: 7,
+  });
+  assert.equal(seedStatus(seed), "built");
+});
+
+test("status reads delayed when the ship landed past the date", () => {
+  const seed = makeSeed({
+    plantedAt: new Date(Date.now() - 35 * DAY_MS),
+    shippedAt: new Date(Date.now() - 4 * DAY_MS),
+    shipDays: 31,
+  });
+  assert.equal(seedStatus(seed), "delayed");
 });
 
 test("board orders live seeds by soonest deadline", () => {

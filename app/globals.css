@@ -260,8 +260,16 @@ a {
 }
 
 .seed-row:not(.seed-row--card) .seed-row__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
   font-weight: 600;
   font-size: 16.76px;
+}
+
+.seed-row:not(.seed-row--card) .seed-row__name-text {
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -269,7 +277,7 @@ a {
 
 .seed-row:not(.seed-row--card) .seed-row__tagline {
   display: block;
-  font-size: 10.47px;
+  font-size: 11px;
   line-height: 14px;
   color: var(--muted);
   white-space: nowrap;
@@ -312,9 +320,27 @@ a {
   background: #17bb56;
 }
 
+.seed-row:not(.seed-row--card) .seed-row__visit--delayed {
+  background: #fe9d27;
+}
+
+/* A dropped seed never made its date: outlined, transparent, white. */
+.seed-row:not(.seed-row--card) .seed-row__visit--dropped {
+  background: transparent;
+  border: 0.855px solid #e4e4e4;
+  color: #fff;
+}
+
 .seed-row:not(.seed-row--card) .seed-row__visit svg {
   width: 13px;
   height: 13px;
+}
+
+/* The pill is rendered twice in the markup: beside the name (mobile) and
+   as its own flex slot in the row (desktop). The media query decides
+   which copy shows. */
+.seed-row:not(.seed-row--card) .seed-row__visit--mobile {
+  display: none;
 }
 
 .seed-row--card .seed-row__visit {
@@ -471,11 +497,9 @@ a {
   }
 
   .seed-row:not(.seed-row--card) .seed-row__name {
+    gap: 5px;
     font-size: 17.25px;
     line-height: 22px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .seed-row:not(.seed-row--card) .seed-row__tagline {
@@ -489,7 +513,7 @@ a {
   }
 
   .seed-row:not(.seed-row--card) .seed-row__owner {
-    font-size: 8.45px;
+    font-size: 11px;
     line-height: 11px;
   }
 
@@ -516,9 +540,8 @@ a {
   }
 
   .seed-row:not(.seed-row--card) .seed-row__visit {
-    position: absolute;
-    right: 81px;
-    top: 9px;
+    flex-shrink: 0;
+    align-self: center;
     height: 14.36px;
     padding: 0 5px;
     gap: 2px;
@@ -530,6 +553,18 @@ a {
   .seed-row:not(.seed-row--card) .seed-row__visit svg {
     width: 8.2px;
     height: 8.2px;
+  }
+
+  .seed-row:not(.seed-row--card) .seed-row__visit--dropped {
+    border-width: 0.5px;
+  }
+
+  .seed-row:not(.seed-row--card) .seed-row__visit--mobile {
+    display: inline-flex;
+  }
+
+  .seed-row:not(.seed-row--card) .seed-row__visit--desktop {
+    display: none;
   }
 
   .seed-row:not(.seed-row--card) .seed-row__pushes {

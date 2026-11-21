@@ -26,6 +26,21 @@ export function dayNumber(plantedAt: Date | string): number {
   return Math.floor((Date.now() - new Date(plantedAt).getTime()) / DAY_MS) + 1;
 }
 
+// Status is derived, never stored. A seed builds until its deadline; a
+// ship inside the window is "built", one after it is "delayed" — the
+// receipt still counts the true day number, the pill carries the shame —
+// and a seed that misses its date without shipping has "dropped" until
+// it ships or is abandoned.
+export type SeedStatus = "building" | "built" | "delayed" | "dropped";
+
+export function seedStatus(seed: Seed, now: Date = new Date()): SeedStatus {
+  const deadline = seed.plantedAt.getTime() + seed.targetDays * DAY_MS;
+  if (seed.shippedAt) {
+    return seed.shippedAt.getTime() > deadline ? "delayed" : "built";
+  }
+  return now.getTime() < deadline ? "building" : "dropped";
+}
+
 // The `day N/30 · X to go` counter is always computed, never stored.
 export function counterLabel(seed: Seed): string {
   if (seed.shippedAt) {
