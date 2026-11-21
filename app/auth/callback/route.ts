@@ -49,5 +49,22 @@ export async function GET(request: Request) {
     });
   }
 
+  // GitHub pictures change on the GitHub side; every sign-in carries the
+  // current URL, so sync it here instead of freezing it at signup. Never
+  // null out an existing avatar if the metadata is missing.
+  const githubAvatar = user.user_metadata?.avatar_url as string | undefined;
+  if (githubAvatar) {
+    const { error: avatarError } = await supabase
+      .from("profiles")
+      .update({ avatar_url: githubAvatar })
+      .eq("id", user.id);
+
+    if (avatarError) {
+      return new Response(`Avatar sync failed: ${avatarError.message}`, {
+        status: 500,
+      });
+    }
+  }
+
   return NextResponse.redirect(origin);
 }

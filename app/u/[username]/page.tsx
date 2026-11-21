@@ -48,7 +48,7 @@ export default async function ProfilePage({
   const search = await searchParams;
   const errorCode = typeof search.error === "string" ? search.error : null;
   const errorMessage = errorCode
-    ? ERROR_MESSAGES[errorCode] ?? "Something went wrong."
+    ? (ERROR_MESSAGES[errorCode] ?? "Something went wrong.")
     : null;
   const saved = "saved" in search;
   const profile = await getProfileByUsername(username);
@@ -100,8 +100,8 @@ export default async function ProfilePage({
               target="_blank"
               rel="noopener noreferrer"
             >
+              Follow on
               <XLogo />
-              Follow on X
             </a>
           )}
           {/* GitHub always provides an avatar at sign-in; email users have
@@ -113,8 +113,8 @@ export default async function ProfilePage({
               target="_blank"
               rel="noopener noreferrer"
             >
+              Visit on
               <GitHubMark />
-              Visit on GitHub
             </a>
           )}
           {isSelf && (
@@ -188,7 +188,11 @@ export default async function ProfilePage({
           ))
         )}
         {canLaunch && (
-          <a className="launch-seed" href="/seeds/new" aria-label="Launch a seed">
+          <a
+            className="launch-seed"
+            href="/seeds/new"
+            aria-label="Launch a seed"
+          >
             +
           </a>
         )}
