@@ -81,7 +81,9 @@ export default function SeedRow({
           </span>
         </span>
       </Link>
-      <Link href={`/seeds/${id}`} className="seed-row__who">
+      {/* The username is a profile link, not a seed link — @owner points
+          at /u/{owner} everywhere the row shows it. */}
+      <Link href={`/u/${owner}`} className="seed-row__who">
         {avatarUrl && (
           <img src={avatarUrl} alt="" className="seed-row__avatar" />
         )}

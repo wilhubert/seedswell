@@ -64,7 +64,7 @@ export async function getBoardSeeds(): Promise<Seed[]> {
 export async function getProfileByUsername(username: string) {
   const { data, error } = await getSupabase()
     .from("profiles")
-    .select("id, username, avatar_url, bio")
+    .select("id, username, avatar_url, bio, x_handle")
     .eq("username", username)
     .maybeSingle();
 
@@ -79,6 +79,7 @@ export async function getProfileByUsername(username: string) {
     username: data.username,
     avatarUrl: data.avatar_url,
     bio: data.bio,
+    xHandle: data.x_handle ?? null,
   };
 }
 
