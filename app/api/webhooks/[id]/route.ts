@@ -92,7 +92,10 @@ export async function POST(
         project_id: id,
         sha: commit.id,
         message: commit.message,
-        author: commit.author?.name ?? commit.author?.username ?? null,
+        // The GitHub login over the local git user.name: the log shows the
+        // site account identity, not whatever a machine's config says.
+        author:
+          commit.author?.username ?? commit.author?.name ?? null,
         // Only store links we would be willing to render as hrefs.
         url: commit.url?.startsWith("https://") ? commit.url : null,
         committed_at: commit.timestamp ?? new Date().toISOString(),
