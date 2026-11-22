@@ -51,25 +51,6 @@
   gap: 44px;
 }
 
-.btn--x,
-.btn--github {
-  gap: 8px;
-  height: 37px;
-  padding: 0 12px;
-  border: none;
-  border-radius: 5px;
-  background: #ffffff;
-  color: #000;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 26px;
-}
-
-.btn--x:hover,
-.btn--github:hover {
-  background: #d4dbdf;
-}
-
 .btn--chip {
   height: 37px;
   padding: 0 12px;
@@ -136,7 +117,7 @@
 .profile-edit__form input {
   border-radius: 10px;
   border: 0.5px solid var(--line);
-  background: var(--panel);
+  background: var(--card);
   color: var(--ink);
   padding: 10px 14px;
   font-family: inherit;

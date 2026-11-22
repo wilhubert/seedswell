@@ -28,7 +28,7 @@
   display: inline-flex;
   align-items: center;
   padding: 0 14px;
-  background: var(--panel);
+  background: var(--card);
   border: 0.5px solid var(--line);
   border-radius: 10px;
   font-size: 20px;
@@ -37,7 +37,7 @@
 
 .project-panel {
   margin-top: 31px;
-  background: var(--panel);
+  background: var(--card);
   border: 0.5px solid var(--line);
   border-radius: 10px;
   padding: 24px;
@@ -68,7 +68,7 @@
 }
 
 .build-item {
-  background: var(--panel-deep);
+  background: var(--card);
   border: 0.5px solid #000;
   border-radius: 5px;
   min-height: 90px;
@@ -117,12 +117,6 @@
   font-size: 14px;
 }
 
-.bet h2 {
-  margin-top: 44px;
-  padding-top: 24px;
-  border-top: 1px solid var(--panel-deep);
-}
-
 .bet__actions {
   margin-top: 14px;
   display: flex;
@@ -140,22 +134,10 @@
   cursor: pointer;
 }
 
-.watch {
-  margin-top: 44px;
-  padding-top: 24px;
-  border-top: 1px solid var(--panel-deep);
-}
-
 .watch__hint {
   margin-top: 10px;
   color: var(--muted);
   font-size: 14px;
-}
-
-.setup h2 {
-  margin-top: 44px;
-  padding-top: 24px;
-  border-top: 1px solid var(--panel-deep);
 }
 
 .setup__steps {
@@ -178,14 +160,6 @@
 
 .setup__fields dd {
   overflow-wrap: anywhere;
-}
-
-.setup__fields code {
-  background: var(--panel-deep);
-  border-radius: 5px;
-  padding: 4px 8px;
-  font-family: ui-monospace, "SF Mono", monospace;
-  font-size: 13px;
 }
 
 .setup__done {

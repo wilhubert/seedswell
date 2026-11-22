@@ -1,13 +1,10 @@
 :root {
-  --bg: #1a1a1a;
-  --card: #232323;
-  --panel: #292a2e;
-  --panel-deep: #333333;
-  --line: #4b6272;
+  --bg: #171C21;
+  --card: #26292c;
+  --line: #435557;
   --ink: #ffffff;
   --muted: #b1b1b1;
-  --blue: #8fc8ee;
-  --blue-light: #d1e8f8;
+  --blue: #79eef8;
   --coral-highlight: #ff7a59;
 }
 
@@ -21,10 +18,6 @@
 html {
   color-scheme: dark;
 }
-
-/* .coral-highlight {
-  color: var(--coral-highlight);
-} */
 
 body {
   background: var(--bg);
@@ -42,17 +35,22 @@ a {
 .btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  border: 1px solid var(--blue);
-  border-radius: 17.6px;
-  height: 39px;
-  padding: 0 22px;
-  background: var(--blue-light);
-  color: #000;
   font-family: inherit;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
+  gap: 8px;
+  height: 37px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #000;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+}
+
+.btn:hover {
+  background: #d4dbdf;
+  color: #000000;
 }
 
 .site-header {
@@ -61,7 +59,7 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 0 45px;
-  border-bottom: 0.5px solid var(--panel);
+  border-bottom: 0.5px solid var(--card);
 }
 
 .brand {
@@ -70,13 +68,6 @@ a {
   gap: 18px;
   font-weight: 600;
   font-size: 24px;
-}
-
-.brand__mark {
-  width: 30px;
-  height: 30px;
-  border-radius: 5px;
-  background: var(--blue-light);
 }
 
 .header-actions {
@@ -96,7 +87,7 @@ a {
   align-items: center;
   gap: 12px;
   padding: 0 22px;
-  background: var(--panel);
+  background: var(--card);
   border: 0.5px solid var(--line);
   border-radius: 10px;
 }
@@ -154,7 +145,7 @@ a {
   border-radius: 8px;
   object-fit: cover;
   flex-shrink: 0;
-  background: var(--panel-deep);
+  background: var(--card);
   color: var(--muted);
   display: flex;
   align-items: center;
@@ -380,16 +371,14 @@ a {
   padding: 0 8px;
   border-width: 0.42px;
   border-color: #8b8b8b;
+  border: 0.5px solid #6e7171;
+
   border-radius: 3.35px;
   background: transparent;
   color: var(--ink);
   font-weight: 800;
   font-size: 12.99px;
   letter-spacing: -0.03em;
-}
-
-.seed-row .btn--watch.btn--ghost {
-  color: var(--blue);
 }
 
 .seed-row .btn--watch .btn__icon {
@@ -402,18 +391,10 @@ a {
   display: none;
 }
 
-.btn--ghost {
-  background: transparent;
-  color: var(--blue);
-}
-
-/* Header "login"/"log out" (Figma "Rectangle 83"): a dark chip with a
-   fine grey outline that sits quietly in the bar instead of the loud
-   blue-light action button. */
 .btn--header {
-  border: 0.88px solid #3b3b3b;
+  border: 0.5px solid var(--line);
   border-radius: 5px;
-  background: #2b2b2b;
+  background: var(--card);
   color: #fff;
   font-size: 14px;
   line-height: 19px;
@@ -435,23 +416,12 @@ a {
   .site-header {
     height: 66px;
     padding: 0 26px;
-    border-bottom: 0.5px solid var(--panel);
+    border-bottom: 0.5px solid var(--card);
   }
 
   .brand {
     gap: 10px;
     font-size: 18px;
-  }
-
-  .btn {
-    height: 25px;
-    padding: 0 15px;
-    border-width: 0.56px;
-    border-radius: 11.2px;
-    font-size: 9.38px;
-    line-height: 12px;
-    background: #1a1a1a;
-    color: #fff;
   }
 
   .header-user {

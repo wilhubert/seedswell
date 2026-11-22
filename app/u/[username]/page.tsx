@@ -118,7 +118,7 @@ export default async function ProfilePage({
               user's own row only. */}
           {!isSelf && profile.xHandle && (
             <a
-              className="btn btn--x"
+              className="btn"
               href={`https://x.com/${profile.xHandle}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -131,7 +131,7 @@ export default async function ProfilePage({
               none, so this link exists only for GitHub-registered users. */}
           {!isSelf && profile.avatarUrl && (
             <a
-              className="btn btn--github"
+              className="btn"
               href={`https://github.com/${profile.username}`}
               target="_blank"
               rel="noopener noreferrer"
