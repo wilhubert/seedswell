@@ -13,14 +13,14 @@
 .auth__error {
   color: #d74871;
   margin-bottom: 18px;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.4;
 }
 
 .auth__notice {
   color: var(--blue);
   margin-bottom: 18px;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.4;
 }
 
@@ -35,7 +35,7 @@
   flex-direction: column;
   gap: 6px;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .auth__form input {

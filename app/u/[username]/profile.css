@@ -8,8 +8,6 @@
   align-items: start;
 }
 
-/* Figma "Rectangle 73": identity card. Name sits beside the avatar, bio
-   and buttons stack under. */
 .profile-card {
   background: var(--card);
   border: 0.5px solid var(--line);
@@ -36,27 +34,23 @@
 }
 
 .profile-card__name {
-  font-size: 34px;
+  font-size: 35px;
   font-weight: 400;
   line-height: 52px;
   overflow-wrap: anywhere;
 }
 
 .profile-card__bio {
-  font-size: 20px;
+  font-size: 16px;
   line-height: 26px;
 }
 
-/* Every Figma variant of this row keeps 44px between chips (follow:
-   145→333, owner: 145→303 measured on the 111px-offset frame). */
 .profile-card__links {
   display: flex;
   flex-wrap: wrap;
   gap: 44px;
 }
 
-/* Figma "Follow on" / "Visit on" (Rectangles 75/76): grey chips, black
-   text, 5px corners. */
 .btn--x,
 .btn--github {
   gap: 8px;
@@ -67,19 +61,15 @@
   background: #ffffff;
   color: #000;
   font-weight: 400;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 26px;
 }
 
 .btn--x:hover,
 .btn--github:hover {
-  background: #ffffff;
+  background: #d4dbdf;
 }
 
-/* Figma "profile-button" (Rectangle 75, owner row): the account actions
-   occupy the same chip slot as the follow buttons — same geometry — but
-   keep the card's darkness with a grey outline and grey text, so they
-   sit quieter than the visitor's filled chips. */
 .btn--chip {
   height: 37px;
   padding: 0 12px;
@@ -89,22 +79,22 @@
   background: #2b2b2b;
   color: #ffffff;
   font-weight: 400;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .btn--chip:hover {
-  background: #ffffff;
-  color: #2b2b2b;
+  background: #393838;
+  color: #ffffff;
 }
 
 .profile-card__error {
   color: #d74871;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .profile-card__saved {
   color: var(--muted);
-  font-size: 15px;
+  font-size: 16px;
 }
 
 /* Owner-only editor. display:contents flattens the details into the
@@ -139,7 +129,7 @@
   flex-direction: column;
   gap: 6px;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .profile-edit__form textarea,
@@ -168,10 +158,8 @@
   display: flex;
   flex-direction: column;
   gap: 39px;
-  box-shadow: none;
 }
 
-/* Figma "Rectangle 77": the SEEDS bar carrying the heading. */
 .seeds-col__head {
   display: flex;
   align-items: center;
@@ -192,24 +180,20 @@
 }
 
 .launch-seed {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: var(--blue-light);
-  color: #000;
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  background: #d9d9d9;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 38px;
-  font-weight: 400;
   margin: 12px auto 0;
 }
 
-/* Desktop (Figma "Seed"/"Seed2"/"Seed3", 508px column): the rows are the
-   board row scaled up — taller card, bigger type, no owner line since
-   every seed on a profile belongs to the same person. Scoped to this
-   page only, and above the mobile breakpoint: below it, the standard
-   mobile row from globals.css is the layout that fits the phone. */
+.launch-seed:hover {
+  background: #cdd4d8;
+}
+
 @media (min-width: 521px) {
   .profile-grid .seed-row:not(.seed-row--card) {
     height: 102px;
@@ -227,7 +211,7 @@
   }
 
   .profile-grid .seed-row:not(.seed-row--card) .seed-row__tagline {
-    font-size: 15.53px;
+    font-size: 12px;
     line-height: 20px;
   }
 
@@ -242,7 +226,7 @@
     .seed-row:not(.seed-row--card)
     .seed-row__time
     .seed-row__time-num {
-    font-size: 29.06px;
+    font-size: 30px;
     line-height: 38px;
   }
 
@@ -250,12 +234,10 @@
     .seed-row:not(.seed-row--card)
     .seed-row__time
     .seed-row__time-unit {
-    font-size: 15.6px;
+    font-size: 16px;
   }
 }
 
-/* Mobile: the two fixed columns can't share a phone screen; stack them
-   and shrink the identity card. */
 @media (max-width: 520px) {
   .profile-grid {
     grid-template-columns: 1fr;
@@ -274,16 +256,11 @@
     height: 96px;
   }
 
-  .profile-card__name {
-    font-size: 24px;
-    line-height: 31px;
-  }
-
   .btn--x,
   .btn--github,
   .btn--chip {
     height: 30px;
     padding: 0 10px;
-    font-size: 15px;
+    font-size: 14px;
   }
 }
