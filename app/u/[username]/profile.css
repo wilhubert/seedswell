@@ -15,7 +15,7 @@
   padding: 37px 41px 47px;
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 30px;
 }
 
 .profile-card__id {
@@ -48,7 +48,7 @@
 .profile-card__links {
   display: flex;
   flex-wrap: wrap;
-  gap: 44px;
+  gap: 30px;
 }
 
 .btn--chip {
