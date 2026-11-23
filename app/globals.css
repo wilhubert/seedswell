@@ -1,6 +1,6 @@
 :root {
   --bg: #12161a;
-  --card: #26292c;
+  --card: #222228;
   --line: #4b5f61;
   --ink: #ffffff;
   --muted: #b1b1b1;
@@ -226,18 +226,23 @@ a {
   color: var(--muted);
 }
 
-/* Desktop board row — Figma "Seed Row-dark1", groups equally spread */
+/* Desktop board row — Figma "Seed Row-dark1": fixed ledger — counter
+   pinned left, the flanking groups pinned right, the business-card slot
+   between them absorbs all the slack. */
 .seed-row:not(.seed-row--card) {
   height: 62.4px;
   padding: 0 26px 0 11px;
-  justify-content: space-between;
   gap: 21.6px;
   border: 0.5px solid var(--line);
   border-radius: 8.4px;
 }
 
 .seed-row:not(.seed-row--card) .seed-row__link {
-  flex: 0 1 auto;
+  /* The business-card slot takes all the row's give, so the groups that
+     flank it hold their positions no matter how long a tagline is; the
+     name and tagline ellipsize where the slot ends. */
+  flex: 1 1 auto;
+  min-width: 0;
   padding: 0;
   gap: 10px;
 }
