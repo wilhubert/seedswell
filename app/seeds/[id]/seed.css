@@ -42,7 +42,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 31px;
+  gap: 15px;
 }
 
 .project-tab {
@@ -50,8 +50,6 @@
   display: inline-flex;
   align-items: center;
   padding: 0 14px;
-  background: var(--card);
-  border: 0.5px solid var(--line);
   border-radius: 10px;
   font-size: 20px;
   font-weight: 800;
@@ -84,7 +82,7 @@
 
 .project-story {
   margin-top: 12px;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 26px;
 }
 
@@ -108,7 +106,7 @@
   border: 0.5px solid var(--line);
   border-radius: 10px;
   min-height: 90px;
-  padding: 13px 14px;
+  padding: 10px 10px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -122,7 +120,7 @@
 }
 
 .build-item__msg {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 26px;
   overflow-wrap: anywhere;
@@ -159,7 +157,7 @@
 .build-log__more summary {
   cursor: pointer;
   color: var(--blue);
-  font-size: 14px;
+  font-size: 12px;
   padding: 6px 0;
 }
 
@@ -196,7 +194,7 @@
   border-radius: 10px;
   background: var(--blue);
   padding: 0 32px;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
 }
 
@@ -209,7 +207,7 @@
 .setup__steps {
   margin-top: 10px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .setup__fields {
@@ -217,7 +215,7 @@
   display: grid;
   grid-template-columns: 140px 1fr;
   gap: 10px 16px;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .setup__fields dt {
@@ -231,7 +229,7 @@
 .setup__done {
   margin-top: 10px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* Stack the columns under the seed row on narrow screens. */
