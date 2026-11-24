@@ -227,8 +227,8 @@ a {
 }
 
 /* Desktop board row — Figma "Seed Row-dark1": groups equally spread
-   (space-between); the tagline capsule is width-capped below so no
-   text can eat the spread and shift the groups. */
+   (space-between); the business-card text slot is a fixed width below,
+   so descriptions can run long without shifting the groups. */
 .seed-row:not(.seed-row--card) {
   height: 62.4px;
   padding: 0 26px 0 11px;
@@ -253,9 +253,12 @@ a {
   flex-direction: column;
   gap: 1px;
   min-width: 0;
-  /* Figma business-card: 215px card = 40px logo + 10px gap + 165px text
-     slot. The check "descriptions should be added..." cuts off here. */
-  max-width: 165px;
+  /* Fixed text slot, wider than the Figma's 165px capsule: every row's
+     card is the same width, so group positions are identical across
+     rows and a long description cuts off at the slot edge. flex-shrink
+     lets the slot compress with ellipses only when the row can't hold
+     it (narrow viewports). */
+  width: 300px;
 }
 
 .seed-row:not(.seed-row--card) .seed-row__name {
@@ -478,8 +481,8 @@ a {
     gap: 3px;
     min-width: 0;
     /* Mobile has its own frame; the tagline clips against the link box
-       instead of the desktop 165px capsule. */
-    max-width: none;
+       instead of the desktop's fixed slot. */
+    width: auto;
   }
 
   .seed-row:not(.seed-row--card) .seed-row__who {

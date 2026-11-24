@@ -109,6 +109,7 @@ export default async function SeedPage({
         <SeedRow
           id={seed.id}
           name={seed.name}
+          tagline={seed.tagline}
           owner={seed.owner}
           counter={counterLabel(seed)}
           counterStack={counterStack(seed)}
@@ -130,7 +131,7 @@ export default async function SeedPage({
           <section className="project-col">
             <span className="project-tab">SEED INFO</span>
             <section className="project-panel">
-              <h2>Story</h2>
+              <h2>STORY</h2>
               {seed.tagline ? (
                 <p className="project-story">{seed.tagline}</p>
               ) : (

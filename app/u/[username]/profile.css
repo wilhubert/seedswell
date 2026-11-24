@@ -181,11 +181,12 @@
     gap: 24px;
   }
 
-  /* The profile row's card slot is wider than the board row's design
-     capsule (165px) — uncap it here; the tagline still one-line
-     ellipsizes against the column edge. */
+  /* The profile row's card slot sizes to its own column, not the board
+     row's fixed desktop slot — opt out here; the tagline still
+     one-line ellipsizes against the column edge. */
   .profile-grid .seed-row:not(.seed-row--card) .seed-row__info {
     max-width: none;
+    width: auto;
   }
 
   .profile-grid .seed-row__who {
