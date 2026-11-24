@@ -1,14 +1,7 @@
-/* Seed page — Figma "MacBook Pro 14\" - 6": the seed row on top, then two
-   columns under their own tab chips — SEED INFO (story, watch) on the
-   left, BUILD LOG (ship receipt + pushes, then the owner's ship and
-   repo-setup controls) on the right. */
-
-/* No side padding: the row renders at the true design width (1016px),
-   same as the board, so its groups sit at the same positions. */
 .project-top {
   max-width: 1016px;
   margin: 39px auto 0;
-  padding: 0;
+  padding: 0 24px;
 }
 
 .project-top__edit {
@@ -20,85 +13,55 @@
 }
 
 .project-body {
-  max-width: 1230px;
-  margin: 117px auto 0;
-  padding: 0 45px 120px;
+  max-width: 561px;
+  margin: 119px auto 0;
+  padding: 0 24px 120px;
 }
 
-.seed-error {
-  color: #d74871;
-  margin: 0 0 20px;
-  font-size: 14px;
-}
-
-/* Two columns sized off the Figma frame: 561px info / 598px log with a
-   71px gutter, scaled with the container down to the stack breakpoint. */
-.project-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 561fr) minmax(0, 598fr);
-  gap: 39px 71px;
-  align-items: start;
-}
-
-.project-col {
-  min-width: 0;
+.project-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  gap: 12px;
 }
 
-.project-tab {
+.tab {
   height: 42px;
   display: inline-flex;
   align-items: center;
   padding: 0 14px;
-  border-radius: 10px;
-  font-size: 20px;
-  font-weight: 800;
-  line-height: 26px;
-}
-
-.project-panel {
   background: var(--card);
   border: 0.5px solid var(--line);
   border-radius: 10px;
-  padding: 14px;
+  font-size: 20px;
+  font-weight: 800;
 }
 
-.project-panel--log {
+.project-panel {
+  margin-top: 31px;
+  background: var(--card);
+  border: 0.5px solid var(--line);
+  border-radius: 10px;
   padding: 24px;
 }
 
 .project-panel h2 {
-  font-size: 16px;
-  font-weight: 400;
-  color: var(--muted);
-  line-height: 26px;
-}
-
-.bet h2,
-.setup h2 {
   font-size: 20px;
   font-weight: 700;
-  line-height: 26px;
+  margin-top: 40px;
+}
+
+.project-panel h2:first-of-type {
+  margin-top: 0;
 }
 
 .project-story {
   margin-top: 12px;
-  font-size: 16px;
+  font-size: 20px;
   line-height: 26px;
 }
 
-.project-story--empty {
-  color: var(--muted);
-  font-size: 16px;
-}
-
-/* Build log — Figma "Build-log item": a bold message line with the UTC
-   stamp right-aligned above a muted subline, 90px tall cards. */
 .build-log {
+  margin-top: 20px;
   list-style: none;
-  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 31px;
@@ -106,49 +69,25 @@
 
 .build-item {
   background: var(--card);
-  border: 0.5px solid var(--line);
-  border-radius: 10px;
+  border: 0.5px solid #000;
+  border-radius: 5px;
   min-height: 90px;
-  padding: 10px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.build-item__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
+  padding: 14px 18px;
 }
 
 .build-item__msg {
   font-size: 16px;
   font-weight: 700;
-  line-height: 26px;
-  overflow-wrap: anywhere;
-}
-
-.build-item__time {
-  flex-shrink: 0;
-  margin-top: 3px;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 21px;
 }
 
 .build-item__meta {
-  font-size: 16px;
-  line-height: 21px;
-  color: #e2e2e2;
-  overflow-wrap: anywhere;
-}
-
-.build-item__link:hover {
-  text-decoration: underline;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 14px;
 }
 
 .build-log__empty {
+  margin-top: 12px;
   color: var(--muted);
   font-size: 16px;
 }
@@ -160,7 +99,7 @@
 .build-log__more summary {
   cursor: pointer;
   color: var(--blue);
-  font-size: 12px;
+  font-size: 14px;
   padding: 6px 0;
 }
 
@@ -172,23 +111,17 @@
   margin-top: 31px;
 }
 
+.seed-error {
+  color: #d74871;
+  margin: 20px 0 0;
+  font-size: 14px;
+}
+
 .bet__actions {
   margin-top: 14px;
   display: flex;
   gap: 20px;
   align-items: flex-start;
-}
-
-.bet__actions input {
-  height: 52px;
-  min-width: 0;
-  border: 0.5px solid var(--line);
-  border-radius: 10px;
-  background: var(--card);
-  color: var(--ink);
-  padding: 0 14px;
-  font-family: inherit;
-  font-size: 16px;
 }
 
 .btn--ship {
@@ -197,7 +130,7 @@
   border-radius: 10px;
   background: var(--blue);
   padding: 0 32px;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
 }
 
@@ -210,7 +143,7 @@
 .setup__steps {
   margin-top: 10px;
   color: var(--muted);
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .setup__fields {
@@ -218,7 +151,7 @@
   display: grid;
   grid-template-columns: 140px 1fr;
   gap: 10px 16px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .setup__fields dt {
@@ -232,25 +165,5 @@
 .setup__done {
   margin-top: 10px;
   color: var(--muted);
-  font-size: 16px;
-}
-
-/* Stack the columns under the seed row on narrow screens. */
-@media (max-width: 900px) {
-  .project-top {
-    padding: 0 14px;
-  }
-
-  .project-body {
-    margin-top: 39px;
-    padding: 0 14px 60px;
-  }
-
-  .project-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .project-panel--log {
-    padding: 14px;
-  }
+  font-size: 14px;
 }

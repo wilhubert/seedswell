@@ -226,38 +226,38 @@ a {
   color: var(--muted);
 }
 
-/* Desktop board row — Figma "Seed Row-dark1": groups equally spread
-   (space-between); the business-card text slot is a fixed width below,
-   so descriptions can run long without shifting the groups. */
+/* Desktop board row — Figma "Seed Row-dark1" as a grid ledger: counter
+   and watch chip anchor the ends, the pill keeps its fixed track, and
+   the two content tracks (card, author) flex to absorb the row's slack
+   — spacing lives inside the template, no space-between needed. The
+   column-gap sets the rhythm between tracks. Text that outgrows its
+   cell (name, description, username) ellipsizes inside it. */
 .seed-row:not(.seed-row--card) {
   height: 62.4px;
   padding: 0 26px 0 11px;
-  justify-content: space-between;
-  gap: 21.6px;
-  border: 0.5px solid var(--line);
-  border-radius: 8.4px;
+  display: grid;
+  grid-template-columns:
+    minmax(0, 80px) 330px auto
+    auto minmax(0, 50px);
+  align-items: center;
+  column-gap: 21.6px;
 }
 
-.seed-row:not(.seed-row--card) .seed-row__link {
-  /* Content-sized, never grown: the spread (not the card slot) absorbs
-     the row's slack. min-width keeps the shrink chain open so long
-     names/taglines ellipsize instead of pushing the other groups. */
-  flex: 0 1 auto;
+/* The card's inner boxes fill the flexible track after the 40px logo,
+   so the name and description cut at the track edge. */
+.seed-row:not(.seed-row--card) .seed-row__link,
+.seed-row:not(.seed-row--card) .seed-row__left,
+.seed-row:not(.seed-row--card) .seed-row__info {
+  flex: 1;
   min-width: 0;
-  padding: 0;
-  gap: 10px;
 }
 
+/* The base .seed-row__info is display: contents (card variant); the
+   board row re-stacks it into the name-over-tagline cell. */
 .seed-row:not(.seed-row--card) .seed-row__info {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  min-width: 0;
-  /* Fixed description slot: every row's card is the same width, so all
-     groups sit at identical positions in every row and the space-
-     between spread gives equal gaps. flex-shrink lets the slot compress
-     with ellipses only when the row can't hold it (narrow viewports). */
-  width: 380px;
 }
 
 .seed-row:not(.seed-row--card) .seed-row__name {
@@ -297,18 +297,18 @@ a {
   }
 }
 
-.seed-row:not(.seed-row--card) .seed-row__counter {
-  flex-shrink: 0;
-}
-
 .seed-row:not(.seed-row--card) .seed-row__visit {
-  flex-shrink: 0;
+  /* The pill is a grid item, which would stretch to fill its 92px
+     track; justify-self: center sizes it to its content instead (it
+     hugs the label) while keeping it centered inside the track. */
+  justify-self: center;
   height: 23.94px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  padding: 0 11px;
+  padding: 0 8px;
+  overflow: hidden;
   background: #dee5e9;
   border-radius: 10.26px;
   font-size: 13.68px;
@@ -390,6 +390,26 @@ a {
   font-weight: 800;
   font-size: 12.99px;
   letter-spacing: -0.03em;
+}
+
+/* Watch chip: its 44.41px grid track sizes the cell; the count
+   centers. The logged-in toggle ships inside a form — make it a grid
+   so the button fills the form. */
+.seed-row:not(.seed-row--card) > form {
+  display: grid;
+}
+
+.seed-row:not(.seed-row--card) .btn--watch {
+  padding: 0;
+  justify-content: center;
+}
+
+.seed-row:not(.seed-row--card) .seed-row__owner {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .seed-row .btn--watch .btn__icon {
@@ -479,9 +499,6 @@ a {
     justify-content: flex-start;
     gap: 3px;
     min-width: 0;
-    /* Mobile has its own frame; the tagline clips against the link box
-       instead of the desktop's fixed slot. */
-    width: auto;
   }
 
   .seed-row:not(.seed-row--card) .seed-row__who {
@@ -622,9 +639,9 @@ a {
   }
 }
 
-/* The pushes pill stays hidden in the compact card variant only; board
-   rows show it (Figma "Seed Row-dark1": chat-bubble chip with the push
-   count). Placed last so it wins over the board styles above. */
+/* Comments aren't live yet — hide the pushes pill everywhere until they
+   ship. Placed last so it wins over the board and card styles above. */
+.seed-row:not(.seed-row--card) .seed-row__pushes,
 .seed-row--card .seed-row__pushes {
   display: none;
 }

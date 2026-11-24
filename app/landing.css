@@ -65,12 +65,6 @@
   padding: 40px 0;
 }
 
-.test {
-  position: relative;
-  width: fit-content;
-  margin-inline: auto;
-}
-
 /* Mobile (Figma "Mobile-dark-seed" 402px frame) */
 @media (max-width: 520px) {
   /* The smaller hero makes room for the beach again, at 80% of its

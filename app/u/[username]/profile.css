@@ -181,12 +181,12 @@
     gap: 24px;
   }
 
-  /* The profile row's card slot sizes to its own column, not the board
-     row's fixed desktop slot — opt out here; the tagline still
-     one-line ellipsizes against the column edge. */
-  .profile-grid .seed-row:not(.seed-row--card) .seed-row__info {
-    max-width: none;
-    width: auto;
+  /* The board row's desktop ledger is a fixed grid; the profile column
+     is narrower and re-skinned, so its rows go back to a plain spread
+     and size to their content here. */
+  .profile-grid .seed-row:not(.seed-row--card) {
+    display: flex;
+    justify-content: space-between;
   }
 
   .profile-grid .seed-row__who {

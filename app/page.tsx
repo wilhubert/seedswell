@@ -22,7 +22,6 @@ export default async function Home() {
   return (
     <main>
       <section className="hero">
-        <div className="test">
           <h1>
             <span>Stop buying domains, start </span>
             <span className="coral-highlight">shipping</span>
@@ -39,8 +38,7 @@ export default async function Home() {
           {/* Soft launch: registering an account to watch is open to
             everyone; launching stays invite-only at /seeds/new. */}
           <JoinSwellButton />
-          {/* <p className="promo">The first 100 seeds are on me!</p> */}
-        </div>
+          <p className="promo">The first 100 seeds are on me!</p>
       </section>
       <section className="board">
         {seeds.length === 0 ? (

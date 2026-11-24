@@ -1,3 +1,6 @@
+"use client";
+
+import { track } from "@vercel/analytics";
 import { unwatchSeed, watchSeed } from "@/app/seeds/[id]/actions";
 import Link from "next/link";
 
@@ -43,6 +46,9 @@ function watchContent(watching: boolean, count: number) {
 // Always visible with the watcher count. Watching toggles for any logged-in
 // user; the owner's own seed is disabled (you can't watch yourself);
 // anonymous visitors get a login link in the same shape.
+// Every click on a clickable variant fires the "watch_button" Vercel
+// Analytics event (with watch/stop/login intent), so the dashboard shows
+// how many people click it.
 export default function WatchButton({
   seedId,
   watching,
@@ -59,6 +65,7 @@ export default function WatchButton({
         className="btn btn--watch"
         href={`/auth/login?next=${encodeURIComponent(returnTo)}`}
         aria-label={label}
+        onClick={() => track("watch_button", { intent: "login" })}
       >
         {watchContent(watching, count)}
       </Link>
@@ -87,6 +94,9 @@ export default function WatchButton({
         className={watching ? "btn btn--watch btn--ghost" : "btn btn--watch"}
         type="submit"
         aria-label={label}
+        onClick={() =>
+          track("watch_button", { intent: watching ? "stop" : "watch" })
+        }
       >
         {watchContent(watching, count)}
       </button>
