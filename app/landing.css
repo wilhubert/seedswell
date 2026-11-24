@@ -37,7 +37,7 @@
   border: none;
   border-radius: 10px;
   background: var(--blue);
-  font-weight: 700;
+  font-weight: 500;
   font-size: 20px;
 }
 
@@ -47,8 +47,10 @@
   color: var(--muted);
 }
 
+/* 1016 == the design's row width (Figma "Seed Row-dark1"): the side
+   padding sits outside it, so every row renders at the true width. */
 .board {
-  max-width: 1016px;
+  max-width: 1064px;
   margin: 210px auto 120px;
   padding: 0 24px;
   display: flex;
@@ -107,7 +109,7 @@
     display: block;
   }
 
-  .btn--join {
+  /* .btn--join {
     min-width: 120px;
     height: 36px;
     margin-top: 38px;
@@ -115,7 +117,7 @@
     border-radius: 7px;
     font-size: 14px;
     color: #000;
-  }
+  } */
 
   .promo {
     font-size: 12px;

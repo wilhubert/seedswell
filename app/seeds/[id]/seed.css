@@ -3,10 +3,12 @@
    left, BUILD LOG (ship receipt + pushes, then the owner's ship and
    repo-setup controls) on the right. */
 
+/* No side padding: the row renders at the true design width (1016px),
+   same as the board, so its groups sit at the same positions. */
 .project-top {
   max-width: 1016px;
   margin: 39px auto 0;
-  padding: 0 24px;
+  padding: 0;
 }
 
 .project-top__edit {
@@ -68,8 +70,9 @@
 }
 
 .project-panel h2 {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--muted);
   line-height: 26px;
 }
 
@@ -234,6 +237,10 @@
 
 /* Stack the columns under the seed row on narrow screens. */
 @media (max-width: 900px) {
+  .project-top {
+    padding: 0 14px;
+  }
+
   .project-body {
     margin-top: 39px;
     padding: 0 14px 60px;

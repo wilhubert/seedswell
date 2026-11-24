@@ -253,12 +253,11 @@ a {
   flex-direction: column;
   gap: 1px;
   min-width: 0;
-  /* Fixed text slot, wider than the Figma's 165px capsule: every row's
-     card is the same width, so group positions are identical across
-     rows and a long description cuts off at the slot edge. flex-shrink
-     lets the slot compress with ellipses only when the row can't hold
-     it (narrow viewports). */
-  width: 300px;
+  /* Fixed description slot: every row's card is the same width, so all
+     groups sit at identical positions in every row and the space-
+     between spread gives equal gaps. flex-shrink lets the slot compress
+     with ellipses only when the row can't hold it (narrow viewports). */
+  width: 380px;
 }
 
 .seed-row:not(.seed-row--card) .seed-row__name {
@@ -623,9 +622,9 @@ a {
   }
 }
 
-/* Comments aren't live yet — hide the pushes pill everywhere until they
-   ship. Placed last so it wins over the board and card styles above. */
-.seed-row:not(.seed-row--card) .seed-row__pushes,
+/* The pushes pill stays hidden in the compact card variant only; board
+   rows show it (Figma "Seed Row-dark1": chat-bubble chip with the push
+   count). Placed last so it wins over the board styles above. */
 .seed-row--card .seed-row__pushes {
   display: none;
 }
