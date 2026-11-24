@@ -176,9 +176,16 @@
 @media (min-width: 521px) {
   .profile-grid .seed-row:not(.seed-row--card) {
     height: 102px;
-    background: #2b2b2b;
+    background: var(--card);
     border-radius: 7.24px;
     gap: 24px;
+  }
+
+  /* The profile row's card slot is wider than the board row's design
+     capsule (165px) — uncap it here; the tagline still one-line
+     ellipsizes against the column edge. */
+  .profile-grid .seed-row:not(.seed-row--card) .seed-row__info {
+    max-width: none;
   }
 
   .profile-grid .seed-row__who {
