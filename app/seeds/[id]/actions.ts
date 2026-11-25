@@ -147,3 +147,84 @@ export async function watchSeed(formData: FormData) {
 export async function unwatchSeed(formData: FormData) {
   await toggleWatch(formData, false);
 }
+
+// Founder updates are insert-only: the check is ownership in the action
+// (clear errors) *and* the RLS policy (cannot be bypassed).
+// Founder updates are insert-only for everyone else, but the owner can
+// retract their own posts: ownership is checked in the action (clear
+// errors) *and* in the RLS policy (cannot be bypassed).
+export async function deleteUpdate(formData: FormData) {
+  const projectId = String(formData.get("project_id") ?? "");
+  const postId = String(formData.get("post_id") ?? "");
+  const { supabase, user } = await requireUser();
+
+  const { data: project, error } = await supabase
+    .from("projects")
+    .select("id, user_id")
+    .eq("id", projectId)
+    .maybeSingle();
+
+  if (error || !project) {
+    redirect(`/seeds/${projectId}?error=lookup`);
+  }
+  if (project.user_id !== user.id) {
+    redirect(`/seeds/${projectId}?error=not-owner`);
+  }
+
+  // select() asks PostgREST for the deleted row back: with RLS
+  // blocking the delete (policy missing) the call "succeeds" with zero
+  // rows gone, so a missing row is an explicit error, not a silent
+  // no-op that reloads the page looking unchanged.
+  const { data: deleted, error: deleteError } = await supabase
+    .from("seed_posts")
+    .delete()
+    .eq("id", postId)
+    .eq("project_id", projectId)
+    .select("id");
+  if (deleteError) {
+    redirect(
+      `/seeds/${projectId}?error=delete-failed&message=${encodeURIComponent(deleteError.message)}`
+    );
+  }
+  if (!deleted || deleted.length === 0) {
+    redirect(`/seeds/${projectId}?error=delete-blocked`);
+  }
+
+  revalidatePath(`/seeds/${projectId}`);
+  redirect(`/seeds/${projectId}`);
+}
+
+export async function postUpdate(formData: FormData) {
+  const projectId = String(formData.get("project_id") ?? "");
+  const body = String(formData.get("body") ?? "").trim();
+  const { supabase, user } = await requireUser();
+
+  if (body.length === 0 || body.length > 280) {
+    redirect(`/seeds/${projectId}?error=invalid-update`);
+  }
+
+  const { data: project, error } = await supabase
+    .from("projects")
+    .select("id, user_id")
+    .eq("id", projectId)
+    .maybeSingle();
+
+  if (error || !project) {
+    redirect(`/seeds/${projectId}?error=lookup`);
+  }
+  if (project.user_id !== user.id) {
+    redirect(`/seeds/${projectId}?error=not-owner`);
+  }
+
+  const { error: insertError } = await supabase
+    .from("seed_posts")
+    .insert({ project_id: projectId, body });
+  if (insertError) {
+    redirect(
+      `/seeds/${projectId}?error=post-failed&message=${encodeURIComponent(insertError.message)}`
+    );
+  }
+
+  revalidatePath(`/seeds/${projectId}`);
+  redirect(`/seeds/${projectId}`);
+}

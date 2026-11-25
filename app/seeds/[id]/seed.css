@@ -1,51 +1,67 @@
+/* Seed page — Figma "Seed-info" frame: two columns, seed info (561px)
+   left and founder updates (596px) right, each with its bold label row
+   above its panel. Palette lives on this page, not in :root — the
+   board keeps its own card/line colors. */
+
 .project-top {
-  max-width: 1016px;
+  max-width: 1230px;
   margin: 39px auto 0;
   padding: 0 24px;
 }
 
-.project-top__edit {
-  display: inline-block;
-  margin-top: 12px;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--blue);
-}
-
 .project-body {
-  max-width: 561px;
+  max-width: 1230px;
   margin: 119px auto 0;
   padding: 0 24px 120px;
+  display: grid;
+  grid-template-columns: 561px 596px;
+  gap: 73px;
+  justify-content: center;
 }
 
-.project-tabs {
+/* Below the Figma frame width the updates column drops under the seed
+   info column — the log is the primary content and stays on top. */
+@media (max-width: 1230px) {
+  .project-body {
+    grid-template-columns: minmax(0, 561px);
+  }
+}
+
+.project-col-head {
   display: flex;
-  gap: 12px;
-}
-
-.tab {
-  height: 42px;
-  display: inline-flex;
   align-items: center;
-  padding: 0 14px;
-  background: var(--card);
-  border: 0.5px solid var(--line);
-  border-radius: 10px;
-  font-size: 20px;
+  justify-content: space-between;
+  height: 21px;
+}
+
+.project-col-head__label {
   font-weight: 800;
+  font-size: 16px;
+  line-height: 21px;
+  color: var(--ink);
 }
 
+.project-col-head__action {
+  font-size: 16px;
+  line-height: 21px;
+  color: var(--ink);
+}
+
+/* Figma Rectangle 86/87: #2B2B2B panel, 0.5px #7DA2BA line. */
 .project-panel {
-  margin-top: 31px;
+  margin-top: 16px;
   background: var(--card);
-  border: 0.5px solid var(--line);
+  border: 0.5px solid #7da2ba;
   border-radius: 10px;
-  padding: 24px;
+  padding: 11px 14px 40px;
 }
 
+/* Section labels (STORY, BUILD LOG, UPDATES): muted, quiet, 16px. */
 .project-panel h2 {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 21px;
+  color: var(--muted);
   margin-top: 40px;
 }
 
@@ -54,36 +70,71 @@
 }
 
 .project-story {
-  margin-top: 12px;
-  font-size: 20px;
-  line-height: 26px;
+  margin-top: 19px;
+  font-size: 16px;
+  line-height: 21px;
+  color: var(--ink);
 }
 
 .build-log {
-  margin-top: 20px;
+  margin-top: 21px;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 31px;
+  gap: 22px;
+  padding-inline-start: 0;
 }
 
+/* Figma "Build-log item": 90px card, bold 20px headline on the left
+   content track, UTC stamp pinned to the right edge. Full commit
+   messages wrap, clamped to two lines at most. */
 .build-item {
-  background: var(--card);
-  border: 0.5px solid #000;
-  border-radius: 5px;
   min-height: 90px;
-  padding: 14px 18px;
+  padding: 10px 13px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 24px;
+  align-items: start;
+  background: var(--card);
+  border: 0.5px solid #7da2ba;
+  border-radius: 10px;
+}
+
+.build-item__main {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
 }
 
 .build-item__msg {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
+  line-height: 26px;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .build-item__meta {
-  margin-top: 6px;
-  color: var(--muted);
   font-size: 14px;
+  line-height: 21px;
+  color: #e2e2e2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The stamp sits on the headline's line: 26px line box, 21px stamp. */
+.build-item__stamp {
+  margin-top: 5px;
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--ink);
+  white-space: nowrap;
 }
 
 .build-log__empty {
@@ -92,78 +143,243 @@
   font-size: 16px;
 }
 
+/* Figma "Show entire build log": centered small text with a right-
+   pointing triangle that rotates down when the log is open. */
 .build-log__more {
   list-style: none;
+  display: flex;
+  justify-content: center;
 }
 
 .build-log__more summary {
   cursor: pointer;
-  color: var(--blue);
-  font-size: 14px;
-  padding: 6px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  line-height: 15px;
+  color: #e2e2e2;
 }
 
 .build-log__more summary:hover {
   text-decoration: underline;
 }
 
+.build-log__more summary::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: #e2e2e2;
+  clip-path: polygon(0 0, 0 100%, 100% 50%);
+  transition: transform 0.15s ease;
+}
+
+.build-log__more[open] summary::before {
+  transform: rotate(90deg);
+}
+
 .build-log__more .build-log {
-  margin-top: 31px;
+  margin-top: 22px;
+}
+
+/* Founder updates — Figma "Founder-updates": bare numbered items,
+   muted number track and white text, no timestamps by decision. */
+.updates {
+  margin-top: 22px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding-inline-start: 0;
+}
+
+.updates__item {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  font-size: 16px;
+  line-height: 21px;
+}
+
+/* The owner's view grows an 18px delete track on the left (Figma
+   "X circle" icons sit before each numbered item). */
+.updates__item--owner {
+  grid-template-columns: 20px 50px minmax(0, 1fr);
+}
+
+.updates__num {
+  color: var(--muted);
+  margin: 0 20px;
+}
+
+.updates__body {
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.updates__delete,
+.updates__delete-btn {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.updates__delete-btn {
+  display: inline-flex;
+  margin-top: 1.5px; /* optically centers the 18px X on the 21px line */
+}
+
+.updates__delete-btn:hover {
+  color: var(--coral-highlight);
+}
+
+.updates__empty {
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+/* The "post" affordance drops a composer under the section header —
+   owner-only, one field, 280 characters max. */
+.composer {
+  position: relative;
+}
+
+.composer summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 16px;
+  line-height: 21px;
+  color: var(--ink);
+}
+
+.composer summary::-webkit-details-marker {
+  display: none;
+}
+
+.composer__form {
+  position: absolute;
+  right: 0;
+  top: 32px;
+  z-index: 1;
+  width: min(400px, calc(100vw - 48px));
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--card);
+  border: 0.5px solid #7da2ba;
+  border-radius: 10px;
+}
+
+.composer__input {
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: 0.5px solid #7da2ba;
+  border-radius: 5px;
+  padding: 8px 10px;
+  min-height: 84px;
+  resize: vertical;
+}
+
+.composer__input::placeholder {
+  color: var(--muted);
+}
+
+.composer__submit {
+  justify-content: center;
 }
 
 .seed-error {
   color: #d74871;
-  margin: 20px 0 0;
+  margin: 12px 0 8px;
   font-size: 14px;
 }
 
-.bet__actions {
-  margin-top: 14px;
+/* Figma Rectangle 96/62: the ship row sits under the founder-updates
+   panel — the URL field grows, a fixed cyan Ship! button rides the
+   right edge. */
+.ship {
+  margin-top: 25px;
   display: flex;
-  gap: 20px;
-  align-items: flex-start;
+  align-items: center;
+  gap: 8px;
+}
+
+.ship__url {
+  flex: 1;
+  height: 49px;
+  font: inherit;
+  font-size: 16px;
+  line-height: 21px;
+  text-align: start;
+  color: var(--muted);
+  background: var(--card);
+  border: 0.5px solid #7da2ba;
+  border-radius: 10px;
+  padding: 0 14px;
+}
+
+.ship__url::placeholder {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .btn--ship {
+  width: 98px;
   height: 52px;
   border: none;
   border-radius: 10px;
   background: var(--blue);
-  padding: 0 32px;
-  font-size: 18px;
+  padding: 0;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #000000;
   cursor: pointer;
 }
 
-.watch__hint {
-  margin-top: 10px;
-  color: var(--muted);
+/* Who is watching — public, shown to every visitor under the watch
+   button. Wraps as a quiet row of avatar + username profile links. */
+.watchers {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  padding-inline-start: 0;
+}
+
+.watchers__who {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
   font-size: 14px;
+  line-height: 21px;
 }
 
-.setup__steps {
-  margin-top: 10px;
+.watchers__who:hover .watchers__name {
+  text-decoration: underline;
+}
+
+/* Avatar-less watchers get the same initial treatment the board's
+   seed rows use, round like an avatar. */
+.watchers__initial {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  border: 0.5px solid #7da2ba;
   color: var(--muted);
-  font-size: 14px;
-}
-
-.setup__fields {
-  margin-top: 14px;
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 10px 16px;
-  font-size: 14px;
-}
-
-.setup__fields dt {
-  color: var(--muted);
-}
-
-.setup__fields dd {
-  overflow-wrap: anywhere;
-}
-
-.setup__done {
-  margin-top: 10px;
-  color: var(--muted);
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 700;
 }

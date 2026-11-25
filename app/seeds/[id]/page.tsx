@@ -3,25 +3,39 @@ import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
 import WatchButton from "@/components/WatchButton";
 import { counterLabel, counterStack, seedStatus } from "@/lib/board";
-import { getSeedWithLog, isWatching } from "@/lib/seeds";
-import { getOwnWebhookSecret } from "@/lib/secrets";
+import { getSeedPosts, getSeedWithLog, getWatchers, isWatching } from "@/lib/seeds";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { shipSeed } from "./actions";
+import { deleteUpdate, postUpdate, shipSeed } from "./actions";
 import "./seed.css";
 
 export const dynamic = "force-dynamic";
 
-// Production serves at seedswell.app; the vercel.app subdomain is gone.
-const WEBHOOK_URL_BASE = "https://seedswell.app/api/webhooks";
-
 const ERROR_MESSAGES: Record<string, string> = {
   lookup: "Could not find that seed.",
-  "not-owner": "Only the owner can ship this seed.",
+  "not-owner": "Only the owner can do that.",
   "already-shipped": "This seed is already shipped — the book is closed.",
   "invalid-url": "The live URL must start with http:// or https://",
   "ship-failed": "Marking shipped failed.",
   "watch-failed": "Watching failed.",
+  "invalid-update": "An update needs 1–280 characters.",
+  "post-failed": "Posting that update failed.",
+  "delete-failed": "Deleting that update failed.",
+  "delete-blocked":
+    "Could not delete that update — apply the seed_posts delete policy (supabase/migrations/0009_seed_posts_delete.sql) to the database.",
 };
+
+// Figma log stamps: "08 Nov 08:29 UTC" — git times render in UTC.
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+function utcStamp(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(date.getUTCDate())} ${MONTHS[date.getUTCMonth()]} ${pad(
+    date.getUTCHours()
+  )}:${pad(date.getUTCMinutes())} UTC`;
+}
 
 export default async function SeedPage({
   params,
@@ -40,18 +54,14 @@ export default async function SeedPage({
     notFound();
   }
   const { seed, commits } = result;
+  const posts = await getSeedPosts(seed.id);
+  const watchers = await getWatchers(seed.id);
 
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   const isOwner = !!user && user.id === seed.userId;
-
-  // Setup instructions exist only for the owner of a not-yet-connected seed.
-  const needsSetup = isOwner && !seed.connectedAt;
-  const webhookSecret = needsSetup
-    ? await getOwnWebhookSecret(seed.id)
-    : null;
 
   const betOpen = isOwner && !seed.shippedAt;
   const watching =
@@ -64,12 +74,54 @@ export default async function SeedPage({
 
   const commitItem = (commit: (typeof commits)[number]) => (
     <li key={commit.sha} className="build-item">
-      <p className="build-item__msg">{commit.message}</p>
-      <p className="build-item__meta">
-        {commit.author ?? "unknown"} ·{" "}
-        {commit.committedAt.toISOString().slice(0, 10)}
-      </p>
+      <div className="build-item__main">
+        <p className="build-item__msg">{commit.message}</p>
+        <p className="build-item__meta">{commit.author ?? "unknown"}</p>
+      </div>
+      <p className="build-item__stamp">{utcStamp(commit.committedAt)}</p>
     </li>
+  );
+
+  // The log ends where the seed did: the ship event renders as the
+  // newest entry, straight off the project's own receipt fields.
+  const shippedItem = seed.shippedAt ? (
+    <li className="build-item build-item--shipped">
+      <div className="build-item__main">
+        <p className="build-item__msg">Shipped 🎉</p>
+        {seed.shipUrl && (
+          <p className="build-item__meta">
+            Visit this seed at {seed.shipUrl}
+          </p>
+        )}
+      </div>
+      <p className="build-item__stamp">{utcStamp(seed.shippedAt)}</p>
+    </li>
+  ) : null;
+
+  const hasEvents = commits.length > 0 || !!shippedItem;
+  const logBody = !hasEvents ? (
+    <p className="build-log__empty">No pushes yet.</p>
+  ) : collapse ? (
+    <ol className="build-log">
+      {shippedItem}
+      {commitItem(commits[0])}
+      {middleCommits.length > 0 && (
+        <li className="build-log__more">
+          <details>
+            <summary>Show entire build log</summary>
+            <ol className="build-log">
+              {middleCommits.map(commitItem)}
+            </ol>
+          </details>
+        </li>
+      )}
+      {commitItem(commits[commits.length - 1])}
+    </ol>
+  ) : (
+    <ol className="build-log">
+      {shippedItem}
+      {commits.map(commitItem)}
+    </ol>
   );
 
   return (
@@ -86,65 +138,7 @@ export default async function SeedPage({
           avatarUrl={seed.avatarUrl}
           status={seedStatus(seed)}
           shipUrl={seed.shipUrl}
-        />
-        {isOwner && (
-          <Link href={`/seeds/${seed.id}/edit`} className="project-top__edit">
-            edit seed
-          </Link>
-        )}
-      </div>
-      <div className="project-body">
-        {errorMessage && <p className="seed-error">{errorMessage}</p>}
-        <div className="project-tabs">
-          <span className="tab">SEED INFO</span>
-        </div>
-        <section className="project-panel">
-          {seed.tagline && (
-            <>
-              <h2>Story</h2>
-              <p className="project-story">{seed.tagline}</p>
-            </>
-          )}
-          <h2>Build log</h2>
-          {commits.length === 0 ? (
-            <p className="build-log__empty">No pushes yet.</p>
-          ) : collapse ? (
-            <ol className="build-log">
-              {commitItem(commits[0])}
-              {middleCommits.length > 0 && (
-                <li className="build-log__more">
-                  <details>
-                    <summary>show {middleCommits.length} earlier pushes</summary>
-                    <ol className="build-log">
-                      {middleCommits.map(commitItem)}
-                    </ol>
-                  </details>
-                </li>
-              )}
-              {commitItem(commits[commits.length - 1])}
-            </ol>
-          ) : (
-            <ol className="build-log">{commits.map(commitItem)}</ol>
-          )}
-          {betOpen && (
-            <div className="bet">
-              <h2>Your bet</h2>
-              <div className="bet__actions">
-                <form action={shipSeed}>
-                  <input type="hidden" name="project_id" value={seed.id} />
-                  <input
-                    type="url"
-                    name="ship_url"
-                    placeholder="https://… live site (optional)"
-                  />
-                  <button className="btn btn--ship" type="submit">
-                    Ship it
-                  </button>
-                </form>
-              </div>
-            </div>
-          )}
-          <div className="watch">
+          watch={
             <WatchButton
               seedId={seed.id}
               watching={watching}
@@ -153,45 +147,163 @@ export default async function SeedPage({
               disabled={isOwner}
               loggedIn={!!user}
             />
-            <p className="watch__hint">
-              Watched seeds land on your watchlist with their ship receipts.
-            </p>
+          }
+        />
+      </div>
+      <div className="project-body">
+        <div className="project-col">
+          {errorMessage && <p className="seed-error">{errorMessage}</p>}
+          <div className="project-col-head">
+            <span className="project-col-head__label">SEED INFO</span>
+            {isOwner && (
+              <Link
+                href={`/seeds/${seed.id}/edit`}
+                className="project-col-head__action"
+              >
+                edit
+              </Link>
+            )}
           </div>
-          {isOwner && (
-            <div className="setup">
-              <h2>Connect your repo</h2>
-              {seed.connectedAt ? (
-                <p className="setup__done">
-                  Webhook connected. Push to fill the log.
-                </p>
-              ) : webhookSecret ? (
-                <>
-                  <p className="setup__steps">
-                    Your repo → Settings → Webhooks → Add webhook:
-                  </p>
-                  <dl className="setup__fields">
-                    <dt>Payload URL</dt>
-                    <dd>
-                      <code>{`${WEBHOOK_URL_BASE}/${seed.id}`}</code>
-                    </dd>
-                    <dt>Content type</dt>
-                    <dd>
-                      <code>application/json</code>
-                    </dd>
-                    <dt>Secret</dt>
-                    <dd>
-                      <code>{webhookSecret}</code>
-                    </dd>
-                    <dt>Events</dt>
-                    <dd>
-                      <code>Just the push event</code>
-                    </dd>
-                  </dl>
-                </>
-              ) : null}
-            </div>
+          <section className="project-panel">
+            {seed.tagline && (
+              <>
+                <h2>STORY</h2>
+                <p className="project-story">{seed.tagline}</p>
+              </>
+            )}
+            <h2>BUILD LOG</h2>
+            {logBody}
+            {watchers.length > 0 && (
+              <>
+                <h2>WATCHERS</h2>
+                <ul className="watchers">
+                  {watchers.map((watcher) => (
+                    <li key={watcher.username}>
+                      <Link
+                        href={`/u/${watcher.username}`}
+                        className="watchers__who"
+                      >
+                        {watcher.avatarUrl ? (
+                          <img
+                            src={watcher.avatarUrl}
+                            alt=""
+                            className="seed-row__avatar"
+                          />
+                        ) : (
+                          <span
+                            className="watchers__initial"
+                            aria-hidden="true"
+                          >
+                            {watcher.username.slice(0, 1).toLowerCase()}
+                          </span>
+                        )}
+                        <span className="watchers__name">
+                          @{watcher.username}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </section>
+        </div>
+        <div className="project-col">
+          <div className="project-col-head">
+            <span className="project-col-head__label">FOUNDER ACTIVITIES</span>
+            {isOwner && (
+              <details className="composer">
+                <summary>post</summary>
+                <form action={postUpdate} className="composer__form">
+                  <input type="hidden" name="project_id" value={seed.id} />
+                  <textarea
+                    name="body"
+                    className="composer__input"
+                    maxLength={280}
+                    required
+                    placeholder="What shipped, what's next, what you need…"
+                  />
+                  <button className="btn composer__submit" type="submit">
+                    post update
+                  </button>
+                </form>
+              </details>
+            )}
+          </div>
+          <section className="project-panel project-panel--updates">
+            <h2>UPDATES</h2>
+            {posts.length === 0 ? (
+              <p className="updates__empty">
+                No founder updates yet. Watch this seed to catch the first one.
+              </p>
+            ) : (
+              <ol className="updates">
+                {posts.map((post, index) => (
+                  <li
+                    key={post.id}
+                    className={`updates__item${
+                      isOwner ? " updates__item--owner" : ""
+                    }`}
+                  >
+                    {isOwner && (
+                      <form action={deleteUpdate} className="updates__delete">
+                        <input
+                          type="hidden"
+                          name="project_id"
+                          value={seed.id}
+                        />
+                        <input type="hidden" name="post_id" value={post.id} />
+                        <button
+                          type="submit"
+                          className="updates__delete-btn"
+                          aria-label="Delete update"
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            aria-hidden="true"
+                          >
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="9.25"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                            />
+                            <path
+                              d="M8.6 8.6l6.8 6.8M15.4 8.6l-6.8 6.8"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        </button>
+                      </form>
+                    )}
+                    <span className="updates__num">{index + 1}.</span>
+                    <p className="updates__body">{post.body}</p>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </section>
+          {betOpen && (
+            <form action={shipSeed} className="ship">
+              <input type="hidden" name="project_id" value={seed.id} />
+              <input
+                type="url"
+                name="ship_url"
+                className="ship__url"
+                placeholder="Add your URL when you’re ready to ship"
+              />
+              <button className="btn btn--ship" type="submit">
+                Ship!
+              </button>
+            </form>
           )}
-        </section>
+        </div>
       </div>
     </main>
   );

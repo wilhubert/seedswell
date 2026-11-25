@@ -32,6 +32,7 @@ Nothing outside that sentence gets built before Dec 1. If the user asks for some
 - `projects`: `id`, `user_id`, `name`, `tagline`, `planted_at`, `target_days`, `shipped_at`, `ship_days`, `webhook_secret`, `connected_at`, `push_count`. No origin/status fields beyond these; the `day N/30 · X to go` counter is **computed client-side** from `planted_at + target_days`, never stored.
 - `commits` (build log): `sha` (unique with project), `project_id`, `message`, `author`, `url`, `committed_at`, `pushed_at`.
 - `watchers` (watch): `project_id` + `user_id` (composite primary key), `created_at`. Ship-event watch only; the `/watching` page is the update surface. No push notifications, no email (no provider key), no counts surfaced.
+- `seed_posts` (founder updates): `id`, `project_id`, `body` (1–280 chars), `created_at`. Owner can insert and delete own posts via RLS (delete allowed Nov 25, human decision — migration 0009); chronological numbered list on the seed page, so a new post appends as n+1. No edit — posts are public record like the build log. (Pulled into scope Nov 25, human decision.)
 
 Shipped = `shipped_at` set (with `ship_days` for the receipt). It is a user action; the system never auto-closes anything. (Called off with honesty note was removed Nov 14; idle dormancy is parked in `IDEAS.md`.)
 

@@ -9,6 +9,12 @@ export type Commit = {
   committedAt: Date;
 };
 
+export type SeedPost = {
+  id: string;
+  body: string;
+  createdAt: Date;
+};
+
 // Every seed query embeds its owning profile for the row display and a
 // watcher count for the watch button. The profile embed must name its FK:
 // watchers added a second projects→profiles path and PostgREST won't guess.
@@ -123,6 +129,49 @@ export async function getWatchedProjectIds(
   return new Set(data.map((row) => row.project_id as string));
 }
 
+export type Watcher = {
+  userId: string;
+  username: string;
+  avatarUrl: string | null;
+};
+
+// Who watches a seed, oldest watch first — the first believers keep
+// their place at the front of the list. Watch rows are public content
+// (the board shows the counts), so this is readable by anyone.
+export async function getWatchers(projectId: string): Promise<Watcher[]> {
+  const { data, error } = await getSupabase()
+    .from("watchers")
+    .select(
+      "user_id, profiles!watchers_user_id_fkey(username, avatar_url)"
+    )
+    .eq("project_id", projectId)
+    .order("created_at", { ascending: true });
+  if (error) {
+    throw new Error(`Watchers query failed: ${error.message}`);
+  }
+  return data.flatMap((row) => {
+    // The profiles embed arrives as an object or an array depending on
+    // the generated types; take the first entry either way.
+    const profiles = row.profiles as
+      | { username: string; avatar_url: string | null }[]
+      | { username: string; avatar_url: string | null }
+      | null;
+    const profile = Array.isArray(profiles) ? profiles[0] : profiles;
+    // The FK guarantees a profile row; null only if it was mass-deleted
+    // under the read — skip rather than break the page.
+    if (!profile?.username) {
+      return [];
+    }
+    return [
+      {
+        userId: row.user_id as string,
+        username: profile.username,
+        avatarUrl: profile.avatar_url,
+      },
+    ];
+  });
+}
+
 export async function getSeedsByIds(ids: string[]): Promise<Seed[]> {
   if (ids.length === 0) {
     return [];
@@ -172,4 +221,25 @@ export async function getSeedWithLog(
   }));
 
   return { seed: mapProfileAndSeed(row), commits };
+}
+
+// The numbered founder updates on the seed page: chronological, so a
+// new post appends at the bottom as number n+1 and older posts keep
+// their numbers.
+export async function getSeedPosts(projectId: string): Promise<SeedPost[]> {
+  const { data, error } = await getSupabase()
+    .from("seed_posts")
+    .select("id, body, created_at")
+    .eq("project_id", projectId)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw new Error(`Seed posts query failed: ${error.message}`);
+  }
+
+  return data.map((post) => ({
+    id: post.id,
+    body: post.body,
+    createdAt: new Date(post.created_at),
+  }));
 }

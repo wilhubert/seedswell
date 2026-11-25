@@ -1,11 +1,16 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import CopyButton from "@/components/CopyButton";
 import { getSeedWithLog } from "@/lib/seeds";
+import { getOwnWebhookSecret } from "@/lib/secrets";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { editSeed } from "../actions";
 import "../../new/new-seed.css";
 
 export const dynamic = "force-dynamic";
+
+// Production serves at seedswell.app; the vercel.app subdomain is gone.
+const WEBHOOK_URL_BASE = "https://seedswell.app/api/webhooks";
 
 export default async function EditSeedPage({
   params,
@@ -40,6 +45,12 @@ export default async function EditSeedPage({
   if (!user || seed.userId !== user.id) {
     notFound();
   }
+
+  // Edit is the only place setup shows: a connected seed just says so,
+  // an unconnected one gets its personal webhook fields.
+  const webhookSecret = seed.connectedAt
+    ? null
+    : await getOwnWebhookSecret(seed.id);
 
   return (
     <main className="new-seed">
@@ -77,6 +88,54 @@ export default async function EditSeedPage({
           Save
         </button>
       </form>
+      <section className="new-seed__setup">
+        <h2>Connect your repo</h2>
+        <p className="new-seed__setup-note">
+          Connect a GitHub repo and every push lands in this seed's public
+          build log — commit title, author, timestamp. The seed works
+          without it; the log just stays empty until it's hooked up.
+        </p>
+        {seed.connectedAt ? (
+          <p className="new-seed__setup-note new-seed__setup-note--done">
+            Webhook connected. Push to fill the log.
+          </p>
+        ) : (
+          webhookSecret && (
+            <>
+              <p className="new-seed__setup-note">
+                In GitHub, open your repo → Settings → Webhooks → Add
+                webhook, then copy these in:
+              </p>
+              <dl className="new-seed__setup-fields">
+                <dt>Payload URL</dt>
+                <dd>
+                  <code>{`${WEBHOOK_URL_BASE}/${seed.id}`}</code>
+                  <CopyButton text={`${WEBHOOK_URL_BASE}/${seed.id}`} />
+                </dd>
+                <dt>Content type</dt>
+                <dd>
+                  <code>application/json</code>
+                </dd>
+                <dt>Secret</dt>
+                <dd>
+                  <code>{webhookSecret}</code>
+                  <CopyButton text={webhookSecret} />
+                </dd>
+                <dt>Events</dt>
+                <dd>
+                  <code>Just the push event</code>
+                </dd>
+              </dl>
+              <p className="new-seed__setup-note">
+                GitHub sends a one-time ping when you save — this page flips
+                to "Webhook connected" as soon as it arrives. Still showing
+                this form after adding it? Push once, then check Recent
+                deliveries in the webhook settings for the error GitHub saw.
+              </p>
+            </>
+          )
+        )}
+      </section>
     </main>
   );
 }
