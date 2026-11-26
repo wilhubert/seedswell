@@ -140,15 +140,11 @@
   cursor: pointer;
 }
 
-/* Account deletion: the delete toggle sits next to save as its
-   destructive twin. #d74871 is the auth error red. Summaries get no
-   button affordances from the UA once the marker is stripped, so the
-   pointer cursor is set explicitly. */
 .profile-edit__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
+  gap: 30px;
 }
 
 .profile-delete summary {
@@ -187,7 +183,8 @@
 }
 
 .btn--danger:hover {
-  background: #bf3a63;
+  background: #9d3553;
+  color: #ffffff;
 }
 
 .seeds-col {

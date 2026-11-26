@@ -177,7 +177,7 @@ export default async function ProfilePage({
                     />
                   </label>
                   <div className="profile-edit__actions">
-                    <button className="btn btn--ghost" type="submit">
+                    <button className="btn" type="submit">
                       save
                     </button>
                     {/* Irreversible: retyping the username is the

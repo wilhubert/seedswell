@@ -91,7 +91,7 @@ export default function WatchButton({
       <input type="hidden" name="project_id" value={seedId} />
       <input type="hidden" name="return_to" value={returnTo} />
       <button
-        className={watching ? "btn btn--watch btn--ghost" : "btn btn--watch"}
+        className={watching ? "btn btn--watch" : "btn btn--watch"}
         type="submit"
         aria-label={label}
         onClick={() =>

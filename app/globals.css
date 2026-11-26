@@ -49,7 +49,7 @@ a {
 }
 
 .btn:hover {
-  background: #d4dbdf;
+  background: #c5cbcf;
   color: #000000;
 }
 
@@ -306,7 +306,7 @@ a {
      track; justify-self: center sizes it to its content instead (it
      hugs the label) while keeping it centered inside the track. */
   justify-self: center;
-  height: 23.94px;
+  height: 24px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -314,8 +314,8 @@ a {
   padding: 0 8px;
   overflow: hidden;
   background: #dee5e9;
-  border-radius: 10.26px;
-  font-size: 13.68px;
+  border-radius: 10px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 18px;
   color: #1e1e1e;
@@ -356,17 +356,17 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  height: 24.3px;
+  height: 24px;
   padding: 0 8px;
-  border: 0.42px solid #8b8b8b;
-  border-radius: 3.35px;
+  border: 0.5px solid #8b8b8b;
+  border-radius: 3.5px;
   color: var(--ink);
 }
 
 .seed-row:not(.seed-row--card) .seed-row__pushes-icon {
   display: inline-block;
-  width: 16.76px;
-  height: 16.76px;
+  width: 16.5px;
+  height: 16.5px;
 }
 
 .seed-row:not(.seed-row--card) .seed-row__pushes-label {
@@ -375,24 +375,24 @@ a {
 
 .seed-row:not(.seed-row--card) .seed-row__pushes-count {
   font-weight: 800;
-  font-size: 12.99px;
+  font-size: 13px;
   line-height: 17px;
   letter-spacing: -0.03em;
 }
 
 .seed-row .btn--watch {
-  height: 24.3px;
+  height: 24.5px;
   gap: 4px;
   padding: 0 8px;
-  border-width: 0.42px;
+  border-width: 0.5px;
   border-color: #8b8b8b;
   border: 0.5px solid #6e7171;
 
-  border-radius: 3.35px;
+  border-radius: 3.5px;
   background: transparent;
   color: var(--ink);
   font-weight: 800;
-  font-size: 12.99px;
+  font-size: 13px;
   letter-spacing: -0.03em;
 }
 
@@ -418,8 +418,8 @@ a {
 
 .seed-row .btn--watch .btn__icon {
   display: inline-flex;
-  width: 16.76px;
-  height: 16.76px;
+  width: 16.5px;
+  height: 16.5px;
 }
 
 .seed-row .btn--watch .btn__watch-action {
@@ -493,9 +493,9 @@ a {
   }
 
   .seed-row:not(.seed-row--card) .seed-row__logo {
-    width: 44.4px;
-    height: 49.6px;
-    border-radius: 9.78px;
+    width: 44.5px;
+    height: 50px;
+    border-radius: 10px;
     align-self: center;
   }
 
@@ -516,13 +516,13 @@ a {
 
   .seed-row:not(.seed-row--card) .seed-row__name {
     gap: 10px;
-    font-size: 17.25px;
+    font-size: 16px;
     line-height: 22px;
   }
 
   .seed-row:not(.seed-row--card) .seed-row__tagline {
     display: block;
-    font-size: 10.78px;
+    font-size: 11px;
     line-height: 14px;
     color: var(--muted);
     white-space: nowrap;
@@ -549,12 +549,12 @@ a {
   }
 
   .seed-row__time .seed-row__time-num {
-    font-size: 22.4px;
-    line-height: 22.4px;
+    font-size: 24px;
+    line-height: 24px;
   }
 
   .seed-row__time .seed-row__time-unit {
-    font-size: 12.16px;
+    font-size: 12px;
     line-height: 16px;
   }
 
@@ -564,14 +564,14 @@ a {
     height: 14.36px;
     padding: 0 5px;
     gap: 2px;
-    border-radius: 6.16px;
-    font-size: 8.2px;
+    border-radius: 5px;
+    font-size: 11px;
     line-height: 12px;
   }
 
   .seed-row:not(.seed-row--card) .seed-row__visit svg {
-    width: 8.2px;
-    height: 8.2px;
+    width: 8px;
+    height: 8px;
   }
 
   .seed-row:not(.seed-row--card) .seed-row__visit--dropped {
@@ -593,7 +593,7 @@ a {
     display: inline-flex;
     align-items: center;
     gap: 3px;
-    height: 19.2px;
+    height: 19px;
     padding: 0 6px;
     border: 0.33px solid rgba(125, 162, 186, 0.65);
     border-radius: 2.65px;
