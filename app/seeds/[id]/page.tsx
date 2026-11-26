@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
-import WatchButton from "@/components/WatchButton";
 import BuildSpark, { type SparkDay } from "@/components/BuildSpark";
-import { DAY_MS, counterLabel, counterStack, seedStatus } from "@/lib/board";
+import { DAY_MS } from "@/lib/board";
 import { getSeedPosts, getSeedWithLog, getWatchers, isWatching } from "@/lib/seeds";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { deleteUpdate, postUpdate, shipSeed } from "./actions";
@@ -113,26 +112,13 @@ export default async function SeedPage({
     <main>
       <div className="project-top">
         <SeedRow
-          id={seed.id}
-          name={seed.name}
-          owner={seed.owner}
-          counter={counterLabel(seed)}
-          counterStack={counterStack(seed)}
-          pushes={seed.pushCount}
-          logoUrl={seed.logoUrl}
-          avatarUrl={seed.avatarUrl}
-          status={seedStatus(seed)}
-          shipUrl={seed.shipUrl}
-          watch={
-            <WatchButton
-              seedId={seed.id}
-              watching={watching}
-              returnTo={`/seeds/${seed.id}`}
-              count={seed.watchCount}
-              disabled={isOwner}
-              loggedIn={!!user}
-            />
-          }
+          seed={seed}
+          watch={{
+            watching,
+            disabled: isOwner,
+            returnTo: `/seeds/${seed.id}`,
+            loggedIn: !!user,
+          }}
         />
       </div>
       <div className="project-body">

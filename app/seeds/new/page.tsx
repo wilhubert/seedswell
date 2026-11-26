@@ -58,17 +58,21 @@ export default async function NewSeedPage({
           Logo URL (optional)
           <input name="logo_url" type="url" placeholder="https://…" />
         </label>
-        <label>
-          Target days (1–30; a 7-day seed is the classic dare)
-          <input
-            name="target_days"
-            type="number"
-            min={1}
-            max={30}
-            defaultValue={7}
-            required
-          />
-        </label>
+        <fieldset className="new-seed__radios">
+          <legend>Ship in</legend>
+          <label>
+            <input type="radio" name="target_days" value="1" />
+            24 hours
+          </label>
+          <label>
+            <input type="radio" name="target_days" value="7" defaultChecked />
+            7 days
+          </label>
+          <label>
+            <input type="radio" name="target_days" value="30" />
+            30 days
+          </label>
+        </fieldset>
         <button className="btn btn--join" type="submit">
           Launch it
         </button>

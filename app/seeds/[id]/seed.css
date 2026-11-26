@@ -24,6 +24,7 @@
 @media (max-width: 1230px) {
   .project-body {
     grid-template-columns: minmax(0, 561px);
+    margin-top: 50px;
   }
 }
 
@@ -31,19 +32,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 21px;
+  height: 35px;
 }
 
 .project-col-head__label {
   font-weight: 800;
-  font-size: 16px;
-  line-height: 21px;
+  font-size: 20px;
+  /* height: 35px; */
   color: var(--ink);
 }
 
 .project-col-head__action {
   font-size: 16px;
-  line-height: 21px;
+  line-height: 35px;
   color: var(--ink);
 }
 
@@ -51,7 +52,7 @@
 .project-panel {
   margin-top: 16px;
   background: var(--card);
-  border: 0.5px solid #7da2ba;
+  border: 0.5px solid var(--line);
   border-radius: 10px;
   padding: 11px 14px 40px;
 }
@@ -108,7 +109,7 @@
 
 .build-spark__bar {
   width: 100%;
-  background: var(--coral-highlight);
+  background: var(--blue);
 }
 
 .build-spark__bar--shipped {
@@ -233,16 +234,16 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: var(--card);
-  border: 0.5px solid #7da2ba;
+  background: var(--bg);
+  border: 0.5px solid var(--ink);
   border-radius: 10px;
 }
 
 .composer__input {
   font: inherit;
   color: var(--ink);
-  background: transparent;
-  border: 0.5px solid #7da2ba;
+  background: var(--card);
+  border: 0.5px solid var(--line);
   border-radius: 5px;
   padding: 8px 10px;
   min-height: 84px;
@@ -308,6 +309,7 @@
 /* Who is watching — public, shown to every visitor under the watch
    button. Wraps as a quiet row of avatar + username profile links. */
 .watchers {
+  margin-top: 19px;
   list-style: none;
   display: flex;
   flex-wrap: wrap;

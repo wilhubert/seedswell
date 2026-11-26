@@ -1,7 +1,5 @@
 import JoinSwellButton from "@/components/JoinSwellButton";
 import SeedRow from "@/components/SeedRow";
-import WatchButton from "@/components/WatchButton";
-import { counterLabel, counterStack, seedStatus } from "@/lib/board";
 import { getBoardSeeds, getWatchedProjectIds } from "@/lib/seeds";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import "./landing.css";
@@ -15,6 +13,12 @@ export default async function Home() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  // GitHub is the front door: only a GitHub-linked account can go
+  // straight to launching; anonymous or email-only visitors hit the
+  // registration funnel instead.
+  const githubLinked = !!user?.identities?.some(
+    (identity) => identity.provider === "github",
+  );
   const watched = user
     ? await getWatchedProjectIds(user.id)
     : new Set<string>();
@@ -37,8 +41,10 @@ export default async function Home() {
 
           {/* Soft launch: registering an account to watch is open to
             everyone; launching stays invite-only at /seeds/new. */}
-          <JoinSwellButton />
-          <p className="promo">The first 100 seeds are on me!</p>
+          <JoinSwellButton
+            href={githubLinked ? "/seeds/new" : "/auth/register"}
+          />
+          <p className="promo">The first 50 seeds are on me!</p>
       </section>
       <section className="board">
         {seeds.length === 0 ? (
@@ -49,27 +55,13 @@ export default async function Home() {
           seeds.map((seed) => (
             <SeedRow
               key={seed.id}
-              id={seed.id}
-              name={seed.name}
-              owner={seed.owner}
-              counter={counterLabel(seed)}
-              counterStack={counterStack(seed)}
-              tagline={seed.tagline}
-              status={seedStatus(seed)}
-              shipUrl={seed.shipUrl}
-              pushes={seed.pushCount}
-              logoUrl={seed.logoUrl}
-              avatarUrl={seed.avatarUrl}
-              watch={
-                <WatchButton
-                  seedId={seed.id}
-                  watching={!!user && watched.has(seed.id)}
-                  returnTo="/"
-                  count={seed.watchCount}
-                  disabled={!!user && seed.userId === user.id}
-                  loggedIn={!!user}
-                />
-              }
+              seed={seed}
+              watch={{
+                watching: !!user && watched.has(seed.id),
+                disabled: !!user && seed.userId === user.id,
+                returnTo: "/",
+                loggedIn: !!user,
+              }}
             />
           ))
         )}

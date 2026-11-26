@@ -1,21 +1,27 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
-import { type CounterStack, type SeedStatus } from "@/lib/board";
+import WatchButton from "./WatchButton";
+import {
+  counterLabel,
+  counterStack,
+  seedStatus,
+  type Seed,
+  type SeedStatus,
+} from "@/lib/board";
+
+// The watch context a page supplies beside the seed: is the visitor
+// already watching, can they toggle it at all (own seed → no), where
+// the toggle should land afterwards, and are they signed in.
+type WatchProps = {
+  watching: boolean;
+  disabled: boolean;
+  returnTo: string;
+  loggedIn: boolean;
+};
 
 type SeedRowProps = {
-  id: string;
-  name: string;
-  owner: string;
-  counter: string;
-  counterStack?: CounterStack | null;
-  pushes: number;
-  logoUrl?: string | null;
-  avatarUrl?: string | null;
-  tagline?: string | null;
-  status: SeedStatus;
-  shipUrl?: string | null;
+  seed: Seed;
   variant?: "board" | "card";
-  watch?: ReactNode;
+  watch?: WatchProps;
 };
 
 // The pill is rendered twice in the markup: beside the name (mobile) and
@@ -62,21 +68,16 @@ function statusPill(
   return <span className={className}>{status}</span>;
 }
 
-export default function SeedRow({
-  id,
-  name,
-  owner,
-  counter,
-  counterStack,
-  pushes,
-  logoUrl,
-  avatarUrl,
-  tagline,
-  status,
-  shipUrl,
-  variant = "board",
-  watch,
-}: SeedRowProps) {
+// One component, one props shape: pages hand it the derived Seed and
+// the visitor's watch context; the counter, status pill and watch
+// button all fall out of those. The status pill is still rendered
+// twice in the markup (own slot on desktop, beside the name on
+// mobile) and CSS picks one per breakpoint.
+export default function SeedRow({ seed, variant = "board", watch }: SeedRowProps) {
+  const status = seedStatus(seed);
+  const counter = counterLabel(seed);
+  const stack = counterStack(seed);
+
   return (
     // One row, flat children: state counter, business card, author link,
     // desktop status pill, pushes pill and watch button are siblings so
@@ -86,7 +87,7 @@ export default function SeedRow({
     // name on mobile) and CSS picks one per breakpoint.
     <div className={`seed-row${variant === "card" ? " seed-row--card" : ""}`}>
       <span className="seed-row__counter">
-        {counterStack ? (
+        {stack ? (
           <>
             <span className="seed-row__counter-label" aria-hidden="true">
               {counter}
@@ -97,13 +98,11 @@ export default function SeedRow({
                 carries the full day X/30 · N to go reading. */}
             <span className="seed-row__counter-stack">
               <span className="seed-row__time">
-                <span className="seed-row__time-num">{counterStack.days}</span>
+                <span className="seed-row__time-num">{stack.days}</span>
                 <span className="seed-row__time-unit">D</span>
               </span>
               <span className="seed-row__time">
-                <span className="seed-row__time-num">
-                  {counterStack.hours}
-                </span>
+                <span className="seed-row__time-num">{stack.hours}</span>
                 <span className="seed-row__time-unit">H</span>
               </span>
             </span>
@@ -112,13 +111,13 @@ export default function SeedRow({
           counter
         )}
       </span>
-      <Link href={`/seeds/${id}`} className="seed-row__link">
+      <Link href={`/seeds/${seed.id}`} className="seed-row__link">
         <span className="seed-row__left">
-          {logoUrl ? (
-            <img src={logoUrl} alt="" className="seed-row__logo" />
+          {seed.logoUrl ? (
+            <img src={seed.logoUrl} alt="" className="seed-row__logo" />
           ) : (
             <span className="seed-row__logo" aria-hidden="true">
-              {name.slice(0, 1).toLowerCase()}
+              {seed.name.slice(0, 1).toLowerCase()}
             </span>
           )}
           <span className="seed-row__info">
@@ -127,24 +126,26 @@ export default function SeedRow({
                 span so the flexed row ellipsizes the text and never
                 clips the pill. */}
             <span className="seed-row__name">
-              <span className="seed-row__name-text">{name}</span>
-              {statusPill(status, shipUrl, "mobile")}
+              <span className="seed-row__name-text">{seed.name}</span>
+              {statusPill(status, seed.shipUrl, "mobile")}
             </span>
-            {tagline && <span className="seed-row__tagline">{tagline}</span>}
+            {seed.tagline && (
+              <span className="seed-row__tagline">{seed.tagline}</span>
+            )}
           </span>
         </span>
       </Link>
       {/* The username is a profile link, not a seed link — @owner points
           at /u/{owner} everywhere the row shows it. */}
-      <Link href={`/u/${owner}`} className="seed-row__who">
-        {avatarUrl && (
-          <img src={avatarUrl} alt="" className="seed-row__avatar" />
+      <Link href={`/u/${seed.owner}`} className="seed-row__who">
+        {seed.avatarUrl && (
+          <img src={seed.avatarUrl} alt="" className="seed-row__avatar" />
         )}
-        <span className="seed-row__owner">@{owner}</span>
+        <span className="seed-row__owner">@{seed.owner}</span>
       </Link>
       {/* Desktop status pill: its own flex slot in the row, outside the
           seed link — a built seed links out to its live site from here. */}
-      {statusPill(status, shipUrl, "desktop")}
+      {statusPill(status, seed.shipUrl, "desktop")}
       <span className="seed-row__pushes">
         <svg
           className="seed-row__pushes-icon"
@@ -158,10 +159,19 @@ export default function SeedRow({
         >
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
-        <span className="seed-row__pushes-count">{pushes}</span>
+        <span className="seed-row__pushes-count">{seed.pushCount}</span>
         <span className="seed-row__pushes-label"> pushes</span>
       </span>
-      {watch}
+      {watch && (
+        <WatchButton
+          seedId={seed.id}
+          watching={watch.watching}
+          returnTo={watch.returnTo}
+          count={seed.watchCount}
+          disabled={watch.disabled}
+          loggedIn={watch.loggedIn}
+        />
+      )}
     </div>
   );
 }

@@ -1,8 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
-import WatchButton from "@/components/WatchButton";
-import { counterLabel, counterStack, seedStatus } from "@/lib/board";
 import {
   getProfileByUsername,
   getSeedsForUser,
@@ -183,27 +181,13 @@ export default async function ProfilePage({
           seeds.map((seed) => (
             <SeedRow
               key={seed.id}
-              id={seed.id}
-              name={seed.name}
-              owner={seed.owner}
-              tagline={seed.tagline}
-              counter={counterLabel(seed)}
-              counterStack={counterStack(seed)}
-              pushes={seed.pushCount}
-              logoUrl={seed.logoUrl}
-              avatarUrl={seed.avatarUrl}
-              status={seedStatus(seed)}
-              shipUrl={seed.shipUrl}
-              watch={
-                <WatchButton
-                  seedId={seed.id}
-                  watching={!!user && watched.has(seed.id)}
-                  returnTo={`/u/${profile.username}`}
-                  count={seed.watchCount}
-                  disabled={!!user && seed.userId === user.id}
-                  loggedIn={!!user}
-                />
-              }
+              seed={seed}
+              watch={{
+                watching: !!user && watched.has(seed.id),
+                disabled: !!user && seed.userId === user.id,
+                returnTo: `/u/${profile.username}`,
+                loggedIn: !!user,
+              }}
             />
           ))
         )}

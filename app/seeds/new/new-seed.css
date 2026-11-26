@@ -1,7 +1,15 @@
 .new-seed {
   max-width: 560px;
-  margin: 70px auto 0;
+  margin: 10vh auto 0;
   padding: 0 24px 120px;
+}
+
+/* Mobile: vh units shrink with the viewport, so the form pulls closer
+   to the top on small screens. */
+@media (max-width: 520px) {
+  .new-seed {
+    margin: 2vh auto 0;
+  }
 }
 
 .new-seed h1 {
@@ -26,7 +34,7 @@
 .new-seed__form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 30px;
 }
 
 .new-seed__form label {
@@ -53,6 +61,38 @@
   align-self: flex-start;
   border: none;
   cursor: pointer;
+}
+
+/* Deadline radio group: option rows sit inline (radio + label text),
+   overriding the stacked input style the text fields use above. */
+.new-seed__form .new-seed__radios {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.new-seed__form .new-seed__radios legend {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.new-seed__form .new-seed__radios label {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.new-seed__form .new-seed__radios input {
+  height: auto;
+  width: 18px;
+  padding: 0;
+  accent-color: var(--blue);
 }
 
 /* Webhook setup — lives under the form on the edit page. */

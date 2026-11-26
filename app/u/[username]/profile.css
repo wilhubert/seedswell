@@ -142,11 +142,7 @@
 }
 
 .seeds-col__head {
-  display: flex;
-  align-items: center;
-  height: 51px;
-  padding: 0 14px;
-  border-radius: 10px;
+  height: 35px;
   font-size: 20px;
   font-weight: 800;
 }
@@ -226,8 +222,13 @@
 }
 
 @media (max-width: 520px) {
+  /* minmax(0, 1fr), not plain 1fr: a fr track's automatic minimum is
+     the item's min-content, which the seed row's fixed desktop grid
+     columns inflate past the phone — the page scrolls sideways.
+     The landing board is a flex column and stretches its rows to
+     the viewport; this makes the profile column do the same. */
   .profile-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     margin: 26px auto 0;
     padding: 0 14px 60px;
     gap: 39px;
