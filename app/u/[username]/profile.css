@@ -269,6 +269,32 @@
     .seed-row__time-unit {
     font-size: 16px;
   }
+
+  /* The re-skinned profile row drops the board's fixed grid, so the
+     watch button loses its 50px track and centered cell — hand it the
+     desktop pill's width back and center the form in the taller row,
+     so it matches the board rows exactly. */
+  .profile-grid .seed-row:not(.seed-row--card) > form {
+    align-self: center;
+  }
+
+  .profile-grid .seed-row:not(.seed-row--card) .btn--watch {
+    width: 50px;
+  }
+}
+
+/* The two fixed columns plus their 100px gap need ~1191px; between
+   the mobile breakpoint and that width the grid overflowed sideways —
+   the page scrolled horizontally on half-width laptop windows and
+   tablets. The columns stack instead, one capped 508px column
+   centered like the mobile layout but roomier. */
+@media (min-width: 521px) and (max-width: 1190px) {
+  .profile-grid {
+    grid-template-columns: minmax(0, 508px);
+    justify-content: center;
+    gap: 39px;
+    padding: 0 24px 120px;
+  }
 }
 
 @media (max-width: 520px) {
@@ -280,18 +306,26 @@
   .profile-grid {
     grid-template-columns: minmax(0, 1fr);
     margin: 26px auto 0;
-    padding: 0 14px 60px;
+    padding: 0 20px 60px;
     gap: 39px;
   }
 
   .profile-card {
     padding: 20px;
-    gap: 16px;
+    gap: 25px;
   }
 
   .profile-card__avatar {
     width: 96px;
     height: 96px;
+  }
+
+  .profile-card__bio {
+    font-size: 14px;
+  }
+
+  .profile-card__name {
+    font-size: 25px;
   }
 
   .btn--x,

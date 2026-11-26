@@ -6,7 +6,7 @@
 .project-top {
   max-width: 1230px;
   margin: 39px auto 0;
-  padding: 0 24px;
+  padding: 0 20px;
 }
 
 .project-body {
@@ -25,6 +25,7 @@
   .project-body {
     grid-template-columns: minmax(0, 561px);
     margin-top: 50px;
+    padding: 0 20px 120px;
   }
 }
 
@@ -86,8 +87,8 @@
 /* Commits per day since planting, straight off committed_at: one
    full-height column per UTC day — hover (or tap) shows that day's
    count — with the visible bar riding the bottom edge of the column.
-   Coral for days with pushes, a faint hairline for quiet ones, blue
-   marks the day a shipped seed ended its run. */
+   Dimmed blue for days with pushes, a faint hairline for quiet ones,
+   coral marks the day a shipped seed ended its run. */
 .build-spark {
   margin-top: 24px;
   height: 44px;
@@ -113,12 +114,12 @@
 }
 
 .build-spark__bar--shipped {
-  background: var(--blue);
+  background: var(--coral-highlight);
 }
 
 .build-spark__bar--empty {
   height: 2px;
-  background: rgba(125, 162, 186, 0.45);
+  background: var(--blue);
 }
 
 .build-spark__col:hover .build-spark__bar:not(.build-spark__bar--empty) {
