@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/supabase-server";
+import { getSupabaseServiceClient } from "@/lib/supabase-service";
 
 // Bio lives where the Figma bio goes; 280 keeps the card honest without a
 // database constraint (column is text, the limit is conversational).
@@ -56,4 +57,58 @@ export async function editProfile(formData: FormData) {
 
   revalidatePath(`/u/${profile.username}`);
   redirect(`/u/${profile.username}?saved`);
+}
+
+// Account deletion is destructive and irreversible: the FK chain from
+// auth.users cascades, so the profile, seeds, commits, watchers and posts
+// all go with it. The user must retype their username to confirm.
+export async function deleteAccount(formData: FormData) {
+  const { supabase, user } = await requireUser();
+
+  // Same rule as editProfile: the confirmation target comes from the
+  // signed-in user's own row, never from the form or the URL.
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("username")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (profileError || !profile) {
+    redirect("/?error=profile-missing");
+  }
+
+  // Case-insensitive and forgiving of a leading @, so "typed as seen"
+  // works — but the typed text must match the real username.
+  const confirmName = String(formData.get("confirm") ?? "")
+    .trim()
+    .replace(/^@+/, "");
+  if (confirmName.toLowerCase() !== profile.username.toLowerCase()) {
+    redirect(`/u/${profile.username}?error=delete-confirm`);
+  }
+
+  // Sign out before deleting: if deletion then fails, the user is logged
+  // out but the account is intact — log back in and retry. The other
+  // order can strand a live session on a deleted user.
+  const { error: signOutError } = await supabase.auth.signOut();
+  if (signOutError) {
+    redirect(
+      `/u/${profile.username}?error=account-delete&message=${encodeURIComponent(
+        signOutError.message
+      )}`
+    );
+  }
+
+  // Deleting the auth user needs the service role — there is no client-side
+  // API for a user to delete themselves. RLS never applies here; the id
+  // comes from the verified session, not from the form.
+  const service = getSupabaseServiceClient();
+  const { error } = await service.auth.admin.deleteUser(user.id);
+  if (error) {
+    redirect(
+      `/u/${profile.username}?error=account-delete&message=${encodeURIComponent(
+        error.message
+      )}`
+    );
+  }
+
+  redirect("/auth/login?account-deleted");
 }

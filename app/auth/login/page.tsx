@@ -28,6 +28,8 @@ const NOTICES: Record<string, string> = {
     "Your account is created but needs email confirmation first — check your inbox, then log in here.",
   "resend-sent":
     "If that address has an unconfirmed account, a new confirmation email is on its way.",
+  "account-deleted":
+    "Your account is deleted, along with your seeds and build log. Thanks for shipping in the open while it lasted.",
 };
 
 export default async function LoginPage({

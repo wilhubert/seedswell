@@ -8,7 +8,7 @@ import {
 } from "@/lib/seeds";
 import { canLaunchSeeds } from "@/lib/supabase-server";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { editProfile } from "./actions";
+import { editProfile, deleteAccount } from "./actions";
 import "./profile.css";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +17,10 @@ const ERROR_MESSAGES: Record<string, string> = {
   "profile-invalid":
     "Bio over 280 characters, or the X handle is not letters, digits and underscores (max 15).",
   "profile-edit": "Saving your profile failed.",
+  "delete-confirm":
+    "That did not match your username — type it exactly to confirm the deletion.",
+  "account-delete":
+    "Deleting your account failed. Nothing was removed — you can retry.",
 };
 
 function XLogo() {
@@ -145,7 +149,15 @@ export default async function ProfilePage({
               </Link>
               <details className="profile-card__edit">
                 <summary className="btn btn--chip">edit profile</summary>
-                <form className="profile-edit__form" action={editProfile}>
+              </details>
+              {/* The form is a sibling of the details, not a child:
+                  non-summary content of a <details> renders inside the
+                  browser's internal ::details-content box, so it never
+                  became a flex item of this row and never got full
+                  width. As a sibling it claims a full line; the CSS
+                  shows it only when the chip directly before it is
+                  open. */}
+              <form className="profile-edit__form" action={editProfile}>
                   <label>
                     Bio
                     <textarea
@@ -164,11 +176,58 @@ export default async function ProfilePage({
                       placeholder="handle, with or without @"
                     />
                   </label>
-                  <button className="btn btn--ghost" type="submit">
-                    save
-                  </button>
-                </form>
-              </details>
+                  <div className="profile-edit__actions">
+                    <button className="btn btn--ghost" type="submit">
+                      save
+                    </button>
+                    {/* Irreversible: retyping the username is the
+                        confirmation; the action compares against the
+                        signed-in user's own row, never the form. The
+                        confirm input and button belong to the hidden
+                        sibling form below via the form attribute —
+                        forms cannot nest, Enter in the fields still
+                        saves, and required on confirm never blocks a
+                        save. The details holds only the chip and the
+                        confirm content is its sibling: content inside
+                        a <details> renders in the browser's internal
+                        box and would push the chip out of the buttons
+                        row — same reason the edit form is a sibling
+                        of its chip above. */}
+                    <details className="profile-delete">
+                      <summary className="btn btn--danger">
+                        delete account
+                      </summary>
+                    </details>
+                    {/* Direct sibling of the details, so the
+                        adjacent-sibling hide rule in the CSS matches;
+                        flex-basis keeps it on its own full line below
+                        the buttons when revealed. */}
+                    <div className="profile-delete__confirm">
+                      <p className="profile-delete__warning">
+                        This permanently removes your profile, seeds, build
+                        log and watcher list. There is no undo.
+                      </p>
+                      <label>
+                        Type your username to confirm
+                        <input
+                          name="confirm"
+                          form="delete-account"
+                          placeholder={`@${profile.username}`}
+                          autoComplete="off"
+                          required
+                        />
+                      </label>
+                      <button
+                        className="btn btn--danger"
+                        type="submit"
+                        form="delete-account"
+                      >
+                        delete my account
+                      </button>
+                    </div>
+                  </div>
+              </form>
+              <form id="delete-account" action={deleteAccount} hidden />
             </>
           )}
         </div>
@@ -193,13 +252,18 @@ export default async function ProfilePage({
         )}
         {canLaunch && (
           <a
-            className="launch-seed"
+            className="btn launch-seed"
             href="/seeds/new"
             aria-label="Launch a seed"
           >
             {/* Figma "Plus": a 38.4px glyph on a 50px tile, 2.5px
                 strokes inset 20.83% — matched in viewBox units. */}
-            <svg width="38.4" height="38.4" viewBox="0 0 38.4 38.4" aria-hidden="true">
+            <svg
+              width="38.4"
+              height="38.4"
+              viewBox="0 0 38.4 38.4"
+              aria-hidden="true"
+            >
               <path
                 d="M19.2 8v22.4M8 19.2h22.4"
                 stroke="#000"
