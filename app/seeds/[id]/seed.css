@@ -76,110 +76,71 @@
   color: var(--ink);
 }
 
-.build-log {
-  margin-top: 21px;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-  padding-inline-start: 0;
-}
-
-/* Figma "Build-log item": 90px card, bold 20px headline on the left
-   content track, UTC stamp pinned to the right edge. Full commit
-   messages wrap, clamped to two lines at most. */
-.build-item {
-  min-height: 90px;
-  padding: 10px 13px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: 24px;
-  align-items: start;
-  background: var(--card);
-  border: 0.5px solid #7da2ba;
-  border-radius: 10px;
-}
-
-.build-item__main {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  min-width: 0;
-}
-
-.build-item__msg {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 26px;
-  color: var(--ink);
-  overflow-wrap: anywhere;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.build-item__meta {
-  font-size: 14px;
-  line-height: 21px;
-  color: #e2e2e2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* The stamp sits on the headline's line: 26px line box, 21px stamp. */
-.build-item__stamp {
-  margin-top: 5px;
-  font-size: 14px;
-  line-height: 21px;
-  color: var(--ink);
-  white-space: nowrap;
-}
-
 .build-log__empty {
   margin-top: 12px;
   color: var(--muted);
   font-size: 16px;
 }
 
-/* Figma "Show entire build log": centered small text with a right-
-   pointing triangle that rotates down when the log is open. */
-.build-log__more {
-  list-style: none;
+/* Commits per day since planting, straight off committed_at: one
+   full-height column per UTC day — hover (or tap) shows that day's
+   count — with the visible bar riding the bottom edge of the column.
+   Coral for days with pushes, a faint hairline for quiet ones, blue
+   marks the day a shipped seed ended its run. */
+.build-spark {
+  margin-top: 24px;
+  height: 44px;
   display: flex;
-  justify-content: center;
+  gap: 2px;
 }
 
-.build-log__more summary {
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
+.build-spark__col {
+  flex: 1;
+  min-width: 2px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+.build-spark__col:hover {
+  cursor: default;
+}
+
+.build-spark__bar {
+  width: 100%;
+  background: var(--coral-highlight);
+}
+
+.build-spark__bar--shipped {
+  background: var(--blue);
+}
+
+.build-spark__bar--empty {
+  height: 2px;
+  background: rgba(125, 162, 186, 0.45);
+}
+
+.build-spark__col:hover .build-spark__bar:not(.build-spark__bar--empty) {
+  filter: brightness(1.25);
+}
+
+/* The hover readout rides above its own column; columns at the panel's
+   edge can spill slightly — the panel clips nothing (overflow is
+   visible), so the pill stays readable. */
+.build-spark__tip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 3px 8px;
   font-size: 12px;
   line-height: 15px;
-  color: #e2e2e2;
-}
-
-.build-log__more summary:hover {
-  text-decoration: underline;
-}
-
-.build-log__more summary::before {
-  content: "";
-  width: 10px;
-  height: 10px;
-  background: #e2e2e2;
-  clip-path: polygon(0 0, 0 100%, 100% 50%);
-  transition: transform 0.15s ease;
-}
-
-.build-log__more[open] summary::before {
-  transform: rotate(90deg);
-}
-
-.build-log__more .build-log {
-  margin-top: 22px;
+  color: var(--ink);
+  background: var(--card);
+  border: 0.5px solid #7da2ba;
+  border-radius: 6px;
+  pointer-events: none;
 }
 
 /* Founder updates — Figma "Founder-updates": bare numbered items,

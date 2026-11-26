@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
 import WatchButton from "@/components/WatchButton";
-import { counterLabel, counterStack, seedStatus } from "@/lib/board";
+import BuildSpark, { type SparkDay } from "@/components/BuildSpark";
+import { DAY_MS, counterLabel, counterStack, seedStatus } from "@/lib/board";
 import { getSeedPosts, getSeedWithLog, getWatchers, isWatching } from "@/lib/seeds";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { deleteUpdate, postUpdate, shipSeed } from "./actions";
@@ -30,11 +31,48 @@ const MONTHS = [
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
-function utcStamp(date: Date): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(date.getUTCDate())} ${MONTHS[date.getUTCMonth()]} ${pad(
-    date.getUTCHours()
-  )}:${pad(date.getUTCMinutes())} UTC`;
+function utcDay(date: Date): string {
+  return `${date.getUTCDate()} ${MONTHS[date.getUTCMonth()]}`;
+}
+
+// The build log as data: one entry per UTC day of the bet, counted
+// straight off `committed_at` — no schema change, no extra data.
+// Commits dated before planting are pre-bet history and stay off the
+// graph. A seed still building plots up to today; a shipped one stops
+// at (and marks) its ship day.
+function sparklineDays(
+  plantedAt: Date,
+  shippedAt: Date | null,
+  commits: { committedAt: Date }[]
+): SparkDay[] {
+  const utcDayStartMs = (d: Date) =>
+    Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  const plantMs = utcDayStartMs(plantedAt);
+  const endMs = shippedAt ? utcDayStartMs(shippedAt) : utcDayStartMs(new Date());
+  const totalDays = Math.floor((endMs - plantMs) / DAY_MS) + 1;
+  if (totalDays <= 0) {
+    return [];
+  }
+  // Long-running seeds keep only the last 90 days on the graph.
+  const startMs = plantMs + Math.max(totalDays - 90, 0) * DAY_MS;
+  const spanDays = Math.min(totalDays, 90);
+
+  const counts = new Map<number, number>();
+  for (const commit of commits) {
+    const ms = utcDayStartMs(commit.committedAt);
+    if (ms >= startMs && ms <= endMs) {
+      counts.set(ms, (counts.get(ms) ?? 0) + 1);
+    }
+  }
+
+  return Array.from({ length: spanDays }, (_, i) => {
+    const ms = startMs + i * DAY_MS;
+    return {
+      day: utcDay(new Date(ms)),
+      commits: counts.get(ms) ?? 0,
+      shipped: !!shippedAt && ms === utcDayStartMs(shippedAt),
+    };
+  });
 }
 
 export default async function SeedPage({
@@ -67,62 +105,9 @@ export default async function SeedPage({
   const watching =
     !isOwner && !!user ? await isWatching(user!.id, seed.id) : false;
 
-  // A long build log keeps only its two ends: the newest push and the
-  // seed's first push. Everything between collapses behind a toggle.
-  const collapse = commits.length > 2;
-  const middleCommits = collapse ? commits.slice(1, -1) : [];
-
-  const commitItem = (commit: (typeof commits)[number]) => (
-    <li key={commit.sha} className="build-item">
-      <div className="build-item__main">
-        <p className="build-item__msg">{commit.message}</p>
-        <p className="build-item__meta">{commit.author ?? "unknown"}</p>
-      </div>
-      <p className="build-item__stamp">{utcStamp(commit.committedAt)}</p>
-    </li>
-  );
-
-  // The log ends where the seed did: the ship event renders as the
-  // newest entry, straight off the project's own receipt fields.
-  const shippedItem = seed.shippedAt ? (
-    <li className="build-item build-item--shipped">
-      <div className="build-item__main">
-        <p className="build-item__msg">Shipped 🎉</p>
-        {seed.shipUrl && (
-          <p className="build-item__meta">
-            Visit this seed at {seed.shipUrl}
-          </p>
-        )}
-      </div>
-      <p className="build-item__stamp">{utcStamp(seed.shippedAt)}</p>
-    </li>
-  ) : null;
-
-  const hasEvents = commits.length > 0 || !!shippedItem;
-  const logBody = !hasEvents ? (
-    <p className="build-log__empty">No pushes yet.</p>
-  ) : collapse ? (
-    <ol className="build-log">
-      {shippedItem}
-      {commitItem(commits[0])}
-      {middleCommits.length > 0 && (
-        <li className="build-log__more">
-          <details>
-            <summary>Show entire build log</summary>
-            <ol className="build-log">
-              {middleCommits.map(commitItem)}
-            </ol>
-          </details>
-        </li>
-      )}
-      {commitItem(commits[commits.length - 1])}
-    </ol>
-  ) : (
-    <ol className="build-log">
-      {shippedItem}
-      {commits.map(commitItem)}
-    </ol>
-  );
+  // The build log is the graph — no row list, no commit text. The ship
+  // event stays in it as the marked last bar.
+  const sparkDays = sparklineDays(seed.plantedAt, seed.shippedAt, commits);
 
   return (
     <main>
@@ -172,7 +157,11 @@ export default async function SeedPage({
               </>
             )}
             <h2>BUILD LOG</h2>
-            {logBody}
+            {sparkDays.length > 0 ? (
+              <BuildSpark days={sparkDays} totalCommits={commits.length} />
+            ) : (
+              <p className="build-log__empty">No pushes yet.</p>
+            )}
             {watchers.length > 0 && (
               <>
                 <h2>WATCHERS</h2>
