@@ -56,22 +56,33 @@ export function counterLabel(seed: Seed): string {
   return `day ${day}/${seed.targetDays} · ${day - seed.targetDays} over`;
 }
 
-// Stacked readout for the row's time block: the remaining time split into
-// whole days ("01" over a muted D) and the leftover hours ("24" over a
-// muted H, never more than a day's worth). Zero-padded to hold the shape.
+// Stacked readout for the row's time block, rendered in every state:
+// while building, the remaining time split into whole days ("01" over a
+// muted D) and the leftover hours ("24" over a muted H, never more than
+// a day's worth); once shipped, the time it took from planting to the
+// ship receipt; a seed that missed its date without shipping reads
+// 00/00. Zero-padded to hold the shape.
 export type CounterStack = {
   days: string;
   hours: string;
 };
 
-export function counterStack(seed: Seed): CounterStack | null {
+export function counterStack(seed: Seed): CounterStack {
   if (seed.shippedAt) {
-    return null;
+    const elapsedMs = Math.max(
+      seed.shippedAt.getTime() - seed.plantedAt.getTime(),
+      0
+    );
+    return {
+      days: String(Math.floor(elapsedMs / DAY_MS)).padStart(2, "0"),
+      // ceil keeps a ship inside the final hour showing 24 instead of 0.
+      hours: String(Math.ceil((elapsedMs % DAY_MS) / HOUR_MS)).padStart(2, "0"),
+    };
   }
   const remainingMs =
     seed.plantedAt.getTime() + seed.targetDays * DAY_MS - Date.now();
   if (remainingMs <= 0) {
-    return null;
+    return { days: "00", hours: "00" };
   }
   const days = Math.floor(remainingMs / DAY_MS);
   // Leftover hours cap at 24: ceil keeps the last hour of a day showing

@@ -77,6 +77,15 @@ export default function SeedRow({ seed, variant = "board", watch }: SeedRowProps
   const status = seedStatus(seed);
   const counter = counterLabel(seed);
   const stack = counterStack(seed);
+  // The stack's numbers keep the coral highlight only while the seed is
+  // still building: an on-time ship turns them green, a late ship or a
+  // missed date fades them to muted.
+  const tone =
+    status === "built"
+      ? " seed-row__counter-stack--built"
+      : status === "delayed" || status === "dropped"
+        ? " seed-row__counter-stack--failed"
+        : "";
 
   return (
     // One row, flat children: state counter, business card, author link,
@@ -86,30 +95,23 @@ export default function SeedRow({ seed, variant = "board", watch }: SeedRowProps
     // status pill is rendered twice (own slot on desktop, beside the
     // name on mobile) and CSS picks one per breakpoint.
     <div className={`seed-row${variant === "card" ? " seed-row--card" : ""}`}>
-      <span className="seed-row__counter">
-        {stack ? (
-          <>
-            <span className="seed-row__counter-label" aria-hidden="true">
-              {counter}
-            </span>
-            {/* Two stacked rows: whole days to go ("01 D", heavy) above
-                the leftover hours ("24 H", light) — the muted letters sit
-                on the number's baseline. The aria-hidden label above
-                carries the full day X/30 · N to go reading. */}
-            <span className="seed-row__counter-stack">
-              <span className="seed-row__time">
-                <span className="seed-row__time-num">{stack.days}</span>
-                <span className="seed-row__time-unit">D</span>
-              </span>
-              <span className="seed-row__time">
-                <span className="seed-row__time-num">{stack.hours}</span>
-                <span className="seed-row__time-unit">H</span>
-              </span>
-            </span>
-          </>
-        ) : (
-          counter
-        )}
+      <span className={`seed-row__counter-stack${tone}`}>
+        <span className="seed-row__counter-label" aria-hidden="true">
+          {counter}
+        </span>
+        {/* Two stacked rows ("01 D" over "24 H"): what the numbers mean
+            depends on the seed's state — time to go while building, time
+            it took once shipped, 00/00 for a missed date — and the muted
+            letters sit on the number's baseline. The aria-hidden label
+            above carries the full day X/30 · N to go reading. */}
+        <span className="seed-row__time">
+          <span className="seed-row__time-num">{stack.days}</span>
+          <span className="seed-row__time-unit">D</span>
+        </span>
+        <span className="seed-row__time">
+          <span className="seed-row__time-num">{stack.hours}</span>
+          <span className="seed-row__time-unit">H</span>
+        </span>
       </span>
       <Link href={`/seeds/${seed.id}`} className="seed-row__link">
         <span className="seed-row__left">

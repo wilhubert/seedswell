@@ -6,6 +6,7 @@
   --muted: #b1b1b1;
   --blue: #79eef8;
   --coral-highlight: #ff7a59;
+  --danger: #d74871;
 }
 
 *,
@@ -124,7 +125,7 @@ a {
   order: 1;
 }
 
-.seed-row--card .seed-row__counter {
+.seed-row--card .seed-row__counter-stack {
   order: 2;
 }
 
@@ -145,13 +146,12 @@ a {
   border-radius: 8px;
   object-fit: cover;
   flex-shrink: 0;
-  background: var(--card);
-  color: var(--muted);
+  color: var(--ink);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 45px;
 }
 
 .seed-row__avatar {
@@ -224,6 +224,17 @@ a {
   font-size: 14.44px;
   font-weight: 400;
   line-height: 19px;
+  color: var(--muted);
+}
+
+/* The stack's numbers stay coral only while the seed builds: an on-time
+   ship turns them green, a late ship or a missed date fades them to
+   muted. */
+.seed-row__counter-stack--built .seed-row__time-num {
+  color: #17bb56;
+}
+
+.seed-row__counter-stack--failed .seed-row__time-num {
   color: var(--muted);
 }
 
@@ -493,7 +504,7 @@ a {
   }
 
   .seed-row:not(.seed-row--card) .seed-row__logo {
-    width: 44.5px;
+    width: 44px;
     height: 50px;
     border-radius: 10px;
     align-self: center;
@@ -541,7 +552,7 @@ a {
     height: 15px;
   }
 
-  .seed-row:not(.seed-row--card) .seed-row__counter {
+  .seed-row:not(.seed-row--card) .seed-row__counter-stack {
     position: absolute;
     left: 10px;
     top: 50%;

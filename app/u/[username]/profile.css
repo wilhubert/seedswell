@@ -69,7 +69,7 @@
 }
 
 .profile-card__error {
-  color: #d74871;
+  color: var(--danger);
   font-size: 16px;
 }
 
@@ -171,14 +171,14 @@
 }
 
 .profile-delete__warning {
-  color: #d74871;
+  color: var(--danger);
   font-size: 14px;
   line-height: 22px;
   margin: 0;
 }
 
 .btn--danger {
-  background: #d74871;
+  background: var(--danger);
   color: #ffffff;
 }
 
@@ -246,9 +246,9 @@
   }
 
   .profile-grid .seed-row:not(.seed-row--card) .seed-row__logo {
-    width: 64px;
-    height: 71.48px;
-    border-radius: 14.09px;
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
     background: rgba(217, 217, 217, 0.21);
   }
 

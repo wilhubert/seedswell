@@ -260,7 +260,7 @@
 }
 
 .seed-error {
-  color: #d74871;
+  color: var(--danger);
   margin: 12px 0 8px;
   font-size: 14px;
 }

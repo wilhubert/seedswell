@@ -1,6 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { boardOrder, counterLabel, seedStatus, type Seed } from "../lib/board.ts";
+import {
+  boardOrder,
+  counterLabel,
+  counterStack,
+  seedStatus,
+  type Seed,
+} from "../lib/board.ts";
 
 const DAY_MS = 86_400_000;
 
@@ -52,6 +58,35 @@ test("counter shows the ship receipt", () => {
     shipDays: 22,
   });
   assert.equal(counterLabel(seed), "shipped · 22 days");
+});
+
+test("stack reads the remaining days and hours mid-flight", () => {
+  const seed = makeSeed({ plantedAt: new Date(Date.now() - 12.5 * DAY_MS) });
+  assert.deepEqual(counterStack(seed), { days: "17", hours: "12" });
+});
+
+test("stack reads 00/00 once the date passes without shipping", () => {
+  const seed = makeSeed({ plantedAt: new Date(Date.now() - 30.5 * DAY_MS) });
+  assert.deepEqual(counterStack(seed), { days: "00", hours: "00" });
+});
+
+test("stack reads the elapsed days and hours at ship time", () => {
+  const seed = makeSeed({
+    plantedAt: new Date(Date.now() - 6.5 * DAY_MS),
+    shippedAt: new Date(Date.now() - 0.5 * DAY_MS),
+    shipDays: 7,
+  });
+  assert.deepEqual(counterStack(seed), { days: "06", hours: "00" });
+});
+
+test("stack counts a ship inside the final hour of a day as 24", () => {
+  const seed = makeSeed({
+    plantedAt: new Date(Date.now() - DAY_MS - 3 * 3_600_000),
+    targetDays: 30,
+    shippedAt: new Date(),
+    shipDays: 2,
+  });
+  assert.deepEqual(counterStack(seed), { days: "01", hours: "03" });
 });
 
 test("status reads building while the date is ahead", () => {

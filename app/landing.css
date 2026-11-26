@@ -51,7 +51,7 @@
    padding sits outside it, so every row renders at the true width. */
 .board {
   max-width: 1064px;
-  margin: 210px auto 120px;
+  margin: 150px auto 120px;
   padding: 0 24px;
   display: flex;
   flex-direction: column;
@@ -63,6 +63,13 @@
   color: var(--muted);
   font-size: 20px;
   padding: 40px 0;
+}
+
+.seed-row__logo {
+  width: 45px;
+  height: 45px;
+  border-radius: 14px;
+  background: rgba(217, 217, 217, 0.21);
 }
 
 /* Mobile (Figma "Mobile-dark-seed" 402px frame) */
@@ -85,8 +92,6 @@
     text-wrap: balance;
     margin: 0;
   }
-
-
 
   .hero__sub {
     font-size: 17px;
