@@ -11,6 +11,13 @@ import { useRef, useState } from "react";
 const MAX_EDGE = 400;
 const WEBP_QUALITY = 0.85;
 
+// Mirrors PHOTO_MAX_BYTES in app/u/[username]/actions.ts. The server
+// bound alone cannot produce its friendly error for an oversized pick:
+// Next rejects the POST body before any action code runs, so the user
+// would land on the framework's "Body exceeded" page instead. The
+// picker checks first and never attaches an oversized file.
+const PHOTO_MAX_BYTES = 2 * 1024 * 1024;
+
 function kilobytes(bytes: number) {
   return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
@@ -53,37 +60,56 @@ async function downscale(file: File): Promise<File> {
 export default function AvatarPicker() {
   const photoInput = useRef<HTMLInputElement>(null);
   const originalInput = useRef<HTMLInputElement>(null);
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<{
+    text: string;
+    error: boolean;
+  } | null>(null);
 
-  async function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+  function attach(display: File | null, archive: File | null) {
     const displayTransfer = new DataTransfer();
     const archiveTransfer = new DataTransfer();
-    if (!file) {
-      if (photoInput.current) photoInput.current.files = displayTransfer.files;
-      if (originalInput.current)
-        originalInput.current.files = archiveTransfer.files;
-      setStatus(null);
-      return;
+    if (display) {
+      displayTransfer.items.add(display);
     }
-    try {
-      const processed = await downscale(file);
-      displayTransfer.items.add(processed);
-      if (processed !== file) {
-        archiveTransfer.items.add(file);
-      }
-      setStatus(
-        processed === file
-          ? file.name
-          : `${file.name} — optimized to ${kilobytes(processed.size)}`,
-      );
-    } catch {
-      displayTransfer.items.add(file);
-      setStatus(`${file.name} — not optimized`);
+    if (archive) {
+      archiveTransfer.items.add(archive);
     }
     if (photoInput.current) photoInput.current.files = displayTransfer.files;
     if (originalInput.current)
       originalInput.current.files = archiveTransfer.files;
+  }
+
+  async function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      attach(null, null);
+      setStatus(null);
+      return;
+    }
+    // Too large to archive: attach nothing at all — a silently partial
+    // upload (display copy without the original) would be a fake
+    // success state. Clearing both inputs also prevents the previous
+    // pick from riding along under the new filename.
+    if (file.size > PHOTO_MAX_BYTES) {
+      attach(null, null);
+      setStatus({ text: "Photo must be 2 MB or smaller.", error: true });
+      return;
+    }
+    try {
+      const processed = await downscale(file);
+      attach(processed, processed === file ? null : file);
+      setStatus(
+        processed === file
+          ? { text: file.name, error: false }
+          : {
+              text: `${file.name} — optimized to ${kilobytes(processed.size)}`,
+              error: false,
+            },
+      );
+    } catch {
+      attach(file, null);
+      setStatus({ text: `${file.name} — not optimized`, error: false });
+    }
   }
 
   return (
@@ -95,7 +121,15 @@ export default function AvatarPicker() {
       />
       <input ref={photoInput} type="file" name="photo" hidden />
       <input ref={originalInput} type="file" name="photo_original" hidden />
-      {status && <span className="avatar-picker__status">{status}</span>}
+      {status && (
+        <span
+          className={`avatar-picker__status${
+            status.error ? " avatar-picker__status--error" : ""
+          }`}
+        >
+          {status.text}
+        </span>
+      )}
     </>
   );
 }
