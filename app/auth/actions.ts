@@ -108,7 +108,13 @@ export async function resendConfirmationEmail(formData: FormData) {
   const supabase = await createSupabaseServerClient();
   // Supabase answers identically whether the address has a pending signup or
   // not, so the copy below stays conditional on purpose — no enumeration.
-  const { error } = await supabase.auth.resend({ type: "signup", email });
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+    // Same route as signUp: the resent confirmation link must land the
+    // code on the callback route that exchanges it for a session.
+    options: { emailRedirectTo: `${await requestOrigin()}/auth/callback` },
+  });
   if (error) {
     redirect(
       `/auth/login?error=resend-failed&message=${encodeURIComponent(
@@ -157,6 +163,11 @@ export async function registerWithEmail(formData: FormData) {
     password,
     options: {
       data: { user_name: username, full_name: username, name: username },
+      // Without this, Supabase sends the confirmation link to the Site URL
+      // and the code lands on "/" — where nothing exchanges it for a
+      // session. It must land on the same route GitHub OAuth uses.
+      // The URL also has to be in Supabase's Redirect URLs allowlist.
+      emailRedirectTo: `${await requestOrigin()}/auth/callback`,
     },
   });
 
