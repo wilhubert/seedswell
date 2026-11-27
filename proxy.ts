@@ -50,8 +50,12 @@ export async function proxy(request: NextRequest) {
     if (error || !data.session) {
       // Wrong device for the PKCE verifier, or an already-used code: the
       // email is still confirmed, ordinary login completes the account.
+      // The real reason travels in the message param — a missing verifier
+      // and a consumed code need different fixes.
       target.pathname = "/auth/login";
-      target.search = "?error=confirm-exchange";
+      target.search =
+        "?error=confirm-exchange&message=" +
+        encodeURIComponent(error?.message ?? "no session returned");
     } else {
       target.search = "";
     }
