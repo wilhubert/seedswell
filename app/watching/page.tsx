@@ -17,8 +17,7 @@ export default async function WatchingPage() {
       <section className="watching">
         <h1>Watching</h1>
         <p className="watching__sub">
-          Seeds you watch and their ship receipts. Shipped seeds keep their
-          receipt here until you stop watching.
+          Seeds you watch and their shipping status. Shipped seeds are kept here until you stop watching.
         </p>
         {seeds.length === 0 ? (
           <p className="watching__empty">
@@ -31,7 +30,20 @@ export default async function WatchingPage() {
           <ol className="watching__list">
             {seeds.map((seed) => (
               <li key={seed.id}>
-                <SeedRow seed={seed} variant="card" />
+                {/* Standard board rows: the page is a signed-in watch
+                    list, so every row shows the watch chip as its
+                    state (watching: true) — it is also the only way
+                    to stop watching from here. Own seeds can't be
+                    unwatched, same rule as the board. */}
+                <SeedRow
+                  seed={seed}
+                  watch={{
+                    watching: true,
+                    disabled: seed.userId === user.id,
+                    returnTo: "/watching",
+                    loggedIn: true,
+                  }}
+                />
               </li>
             ))}
           </ol>

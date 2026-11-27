@@ -1,15 +1,17 @@
 .watching {
-  max-width: 561px;
-  margin: 39px auto 0;
+  max-width: 1064px;
+  margin: 50px auto 0;
   padding: 0 24px 120px;
 }
 
 .watching h1 {
+  padding-left: 40px;
   font-size: 24px;
   font-weight: 800;
 }
 
 .watching__sub {
+  padding-left: 40px;
   margin-top: 8px;
   color: var(--muted);
   font-size: 14px;
@@ -27,7 +29,7 @@
 }
 
 .watching__list {
-  margin-top: 20px;
+  margin-top: 50px;
   list-style: none;
   display: flex;
   flex-direction: column;
