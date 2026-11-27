@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
 import BuildSpark, { type SparkDay } from "@/components/BuildSpark";
+import { avatarSrc } from "@/lib/avatar";
 import { DAY_MS } from "@/lib/board";
 import { getSeedPosts, getSeedWithLog, getWatchers, isWatching } from "@/lib/seeds";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
@@ -160,7 +161,7 @@ export default async function SeedPage({
                       >
                         {watcher.avatarUrl ? (
                           <img
-                            src={watcher.avatarUrl}
+                            src={avatarSrc(watcher.avatarUrl, 24)}
                             alt=""
                             className="seed-row__avatar"
                           />

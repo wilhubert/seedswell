@@ -33,6 +33,18 @@
   flex-shrink: 0;
 }
 
+/* Figma fallback: a 162px teal circle with the uppercase initial in
+   light cyan, flex-centered the way the design's display:flex does. */
+.profile-card__avatar--initial {
+  background: #07828d;
+  color: #79eef8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 96px;
+  font-weight: 400;
+}
+
 .profile-card__name {
   font-size: 35px;
   font-weight: 400;
@@ -128,6 +140,36 @@
   font-family: inherit;
   font-weight: 400;
   font-size: 16px;
+}
+
+/* The file picker keeps the bordered look so the Photo row reads as a
+   form field like Bio and X handle. */
+.profile-edit__form input[type="file"] {
+  cursor: pointer;
+}
+
+.profile-edit__form input[type="file"]::file-selector-button {
+  border: none;
+  border-radius: 5px;
+  margin-right: 12px;
+  padding: 5px 12px;
+  background: #2b2b2b;
+  color: #ffffff;
+  font-family: inherit;
+  font-weight: 400;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.profile-edit__form input[type="file"]::file-selector-button:hover {
+  background: #393838;
+}
+
+/* The picker's "optimized to N KB" line under the file input. */
+.avatar-picker__status {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
 }
 
 .profile-edit__form textarea {
@@ -315,6 +357,12 @@
   .profile-card__avatar {
     width: 96px;
     height: 96px;
+  }
+
+  /* Same initial-to-circle ratio as desktop (96px in 162px), scaled to
+     the 96px mobile avatar. */
+  .profile-card__avatar--initial {
+    font-size: 57px;
   }
 
   .profile-card__bio {

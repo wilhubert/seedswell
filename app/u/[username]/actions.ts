@@ -13,6 +13,16 @@ const BIO_MAX = 280;
 // accepted and stripped so "typed as seen" still works.
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 
+// Avatar photos: email-registered users have no GitHub-synced avatar, so
+// they can attach one to the same save. PNG/JPEG/WebP only, 2 MB max —
+// next.config.ts raises the server-action body limit to match.
+const PHOTO_MAX_BYTES = 2 * 1024 * 1024;
+const PHOTO_TYPES: Record<string, string> = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/webp": "webp",
+};
+
 export async function editProfile(formData: FormData) {
   const { supabase, user } = await requireUser();
 
@@ -42,9 +52,82 @@ export async function editProfile(formData: FormData) {
     redirect(`/u/${profile.username}?error=profile-invalid`);
   }
 
+  // The photo upload runs with the user's own session client, so the
+  // storage RLS policies in 0010 are the boundary: every path starts
+  // with the verified user's id, never a value from the form. Absent
+  // or empty files leave the stored avatar untouched.
+  const photo = formData.get("photo");
+  const photoOriginal = formData.get("photo_original");
+  let avatarUrl: string | undefined;
+  if (photo instanceof File && photo.size > 0) {
+    // Both files are validated before anything uploads — a rejected
+    // archive copy must not leave a half-applied save behind.
+    const displayExt = PHOTO_TYPES[photo.type];
+    if (!displayExt) {
+      redirect(`/u/${profile.username}?error=avatar-type`);
+    }
+    if (photo.size > PHOTO_MAX_BYTES) {
+      redirect(`/u/${profile.username}?error=avatar-size`);
+    }
+
+    // The untouched original arrives only when the picker actually
+    // downscaled; it is archived next to the display copy and nothing
+    // ever references it, so it spends storage but never egress. A
+    // future bigger-avatar design can re-derive from it.
+    const original =
+      photoOriginal instanceof File && photoOriginal.size > 0
+        ? photoOriginal
+        : null;
+    const originalExt = original ? PHOTO_TYPES[original.type] : null;
+    if (original && (!originalExt || original.size > PHOTO_MAX_BYTES)) {
+      redirect(`/u/${profile.username}?error=avatar-type`);
+    }
+
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(`${user.id}/avatar.${displayExt}`, photo, {
+        upsert: true,
+        contentType: photo.type,
+      });
+    if (uploadError) {
+      redirect(
+        `/u/${profile.username}?error=avatar-upload&message=${encodeURIComponent(
+          uploadError.message
+        )}`
+      );
+    }
+
+    if (original && originalExt) {
+      const { error: archiveError } = await supabase.storage
+        .from("avatars")
+        .upload(`${user.id}/original.${originalExt}`, original, {
+          upsert: true,
+          contentType: original.type,
+        });
+      if (archiveError) {
+        redirect(
+          `/u/${profile.username}?error=avatar-upload&message=${encodeURIComponent(
+            archiveError.message
+          )}`
+        );
+      }
+    }
+
+    const { data: publicUrl } = supabase.storage
+      .from("avatars")
+      .getPublicUrl(`${user.id}/avatar.${displayExt}`);
+    // The object path is stable, so a replaced photo keeps its URL — the
+    // version param busts the browser cache so the new photo shows at once.
+    avatarUrl = `${publicUrl.publicUrl}?v=${Date.now()}`;
+  }
+
   const { error } = await supabase
     .from("profiles")
-    .update({ bio: bio || null, x_handle: xHandle || null })
+    .update({
+      bio: bio || null,
+      x_handle: xHandle || null,
+      ...(avatarUrl !== undefined ? { avatar_url: avatarUrl } : {}),
+    })
     .eq("id", user.id);
 
   if (error) {
@@ -83,6 +166,37 @@ export async function deleteAccount(formData: FormData) {
     .replace(/^@+/, "");
   if (confirmName.toLowerCase() !== profile.username.toLowerCase()) {
     redirect(`/u/${profile.username}?error=delete-confirm`);
+  }
+
+  // Storage objects have no FK to auth.users — the auth deletion cascades
+  // the database rows but would strand the avatar files in the bucket
+  // forever. They are removed here, while the session is still live so
+  // the owner-scoped RLS delete policy from 0010 applies, and BEFORE the
+  // auth deletion: this order makes the recoverable failure the possible
+  // one (account alive without its photo — retry and re-upload), never
+  // the unrecoverable one (auth user gone, files orphaned, nobody left
+  // to retry).
+  const { data: objects, error: listError } = await supabase.storage
+    .from("avatars")
+    .list(user.id);
+  if (listError) {
+    redirect(
+      `/u/${profile.username}?error=account-delete&message=${encodeURIComponent(
+        listError.message
+      )}`
+    );
+  }
+  if (objects && objects.length > 0) {
+    const { error: removeError } = await supabase.storage
+      .from("avatars")
+      .remove(objects.map((object) => `${user.id}/${object.name}`));
+    if (removeError) {
+      redirect(
+        `/u/${profile.username}?error=account-delete&message=${encodeURIComponent(
+          removeError.message
+        )}`
+      );
+    }
   }
 
   // Sign out before deleting: if deletion then fails, the user is logged

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import WatchButton from "./WatchButton";
+import { avatarSrc } from "@/lib/avatar";
 import {
   counterLabel,
   counterStack,
@@ -141,7 +142,11 @@ export default function SeedRow({ seed, variant = "board", watch }: SeedRowProps
           at /u/{owner} everywhere the row shows it. */}
       <Link href={`/u/${seed.owner}`} className="seed-row__who">
         {seed.avatarUrl && (
-          <img src={seed.avatarUrl} alt="" className="seed-row__avatar" />
+          <img
+            src={avatarSrc(seed.avatarUrl, 30)}
+            alt=""
+            className="seed-row__avatar"
+          />
         )}
         <span className="seed-row__owner">@{seed.owner}</span>
       </Link>

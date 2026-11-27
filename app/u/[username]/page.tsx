@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import SeedRow from "@/components/SeedRow";
+import AvatarPicker from "@/components/AvatarPicker";
+import { avatarSrc } from "@/lib/avatar";
 import {
   getProfileByUsername,
   getSeedsForUser,
@@ -17,6 +19,9 @@ const ERROR_MESSAGES: Record<string, string> = {
   "profile-invalid":
     "Bio over 280 characters, or the X handle is not letters, digits and underscores (max 15).",
   "profile-edit": "Saving your profile failed.",
+  "avatar-type": "Photo must be a PNG, JPEG or WebP image.",
+  "avatar-size": "Photo must be 2 MB or smaller.",
+  "avatar-upload": "Uploading your photo failed.",
   "delete-confirm":
     "That did not match your username — type it exactly to confirm the deletion.",
   "account-delete":
@@ -85,6 +90,12 @@ export default async function ProfilePage({
     data: { user },
   } = await supabase.auth.getUser();
   const isSelf = !!user && user.id === profile.id;
+  // GitHub users already carry an avatar GitHub syncs on every sign-in —
+  // and that sync would overwrite an uploaded photo. So the photo field
+  // exists only for accounts without a GitHub identity.
+  const githubLinked = !!user?.identities?.some(
+    (identity) => identity.provider === "github",
+  );
   const watched = user
     ? await getWatchedProjectIds(user.id)
     : new Set<string>();
@@ -103,11 +114,18 @@ export default async function ProfilePage({
           {profile.avatarUrl ? (
             <img
               className="profile-card__avatar"
-              src={profile.avatarUrl}
+              src={avatarSrc(profile.avatarUrl, 162)}
               alt={`@${profile.username}`}
             />
           ) : (
-            <div className="profile-card__avatar" aria-hidden="true" />
+            /* Figma fallback for avatarless (email) users: a teal circle
+               carrying the uppercase initial. */
+            <div
+              className="profile-card__avatar profile-card__avatar--initial"
+              aria-hidden="true"
+            >
+              {profile.username.slice(0, 1).toUpperCase()}
+            </div>
           )}
           <h1 className="profile-card__name">@{profile.username}</h1>
         </div>
@@ -129,9 +147,13 @@ export default async function ProfilePage({
               <XLogo />
             </a>
           )}
-          {/* GitHub always provides an avatar at sign-in; email users have
-              none, so this link exists only for GitHub-registered users. */}
-          {!isSelf && profile.avatarUrl && (
+          {/* An avatar used to imply a GitHub account, but email users can
+              now upload photos too — the link is only honest when the
+              avatar itself is GitHub's. */}
+          {!isSelf &&
+            profile.avatarUrl?.startsWith(
+              "https://avatars.githubusercontent.com/",
+            ) && (
             <a
               className="btn btn--github"
               href={`https://github.com/${profile.username}`}
@@ -176,6 +198,16 @@ export default async function ProfilePage({
                       placeholder="handle, with or without @"
                     />
                   </label>
+                  {/* Email-only accounts: no GitHub-synced avatar, so this
+                      attaches a photo on the same save. The picker
+                      downscales the file in the browser before submit;
+                      an empty picker leaves the avatar as it is. */}
+                  {!githubLinked && (
+                    <label>
+                      Photo
+                      <AvatarPicker />
+                    </label>
+                  )}
                   <div className="profile-edit__actions">
                     <button className="btn" type="submit">
                       save
