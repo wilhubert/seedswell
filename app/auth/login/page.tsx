@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   continueWithGitHub,
   loginWithEmail,
+  requestPasswordReset,
   resendConfirmationEmail,
 } from "../actions";
 import { authErrorMessage } from "../errors";
@@ -15,6 +16,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   "login-failed": "Login failed. Wrong email or password?",
   "github-start": "GitHub sign-in failed to start. Try again.",
   "resend-failed": "Resending the confirmation email failed.",
+  "reset-failed": "Sending the password reset email failed.",
   "confirm-exchange":
     "Your email is confirmed, but opening the session failed — log in below and you are set.",
   "profile-seed":
@@ -28,6 +30,10 @@ const NOTICES: Record<string, string> = {
     "Your account is created but needs email confirmation first — check your inbox, then log in here.",
   "resend-sent":
     "If that address has an unconfirmed account, a new confirmation email is on its way.",
+  "reset-sent":
+    "If that address has an account, a password reset link is on its way.",
+  "reset-done":
+    "Password updated — log in below with the new one.",
   "account-deleted":
     "Your account is deleted, along with your seeds and build log. Thanks for shipping in the open while it lasted.",
 };
@@ -87,9 +93,20 @@ export default async function LoginPage({
             Password
             <input name="password" type="password" required />
           </label>
-          <button className="btn" type="submit">
-            Log in
-          </button>
+          <div className="auth__actions">
+            <button className="btn" type="submit">
+              Log in
+            </button>
+            {/* Same form, same email field: the reset request only needs the
+                address, and required-input validation covers both buttons. */}
+            <button
+              className="btn btn--quiet"
+              type="submit"
+              formAction={requestPasswordReset}
+            >
+              Forgot password?
+            </button>
+          </div>
         </form>
       )}
       <p className="auth__divider">or</p>

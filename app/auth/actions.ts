@@ -3,7 +3,11 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createSupabaseServerClient, emailSigninOpen } from "@/lib/supabase-server";
+import {
+  createSupabaseServerClient,
+  emailSigninOpen,
+  requireUser,
+} from "@/lib/supabase-server";
 
 const USERNAME_RE = /^[a-z0-9-]{3,30}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -198,4 +202,67 @@ export async function registerWithEmail(formData: FormData) {
 
   revalidatePath("/", "layout");
   redirect("/");
+}
+
+export async function requestPasswordReset(formData: FormData) {
+  // Reset only ever matters for email accounts; same toggle wall as the
+  // other email flows, enforced against direct POSTs.
+  if (!emailSigninOpen()) {
+    redirect("/auth/login?closed");
+  }
+
+  const email = String(formData.get("email") ?? "").trim();
+  if (!EMAIL_RE.test(email)) {
+    redirect("/auth/login?error=invalid");
+  }
+
+  const supabase = await createSupabaseServerClient();
+  // Supabase answers identically whether the address has an account or not,
+  // so the notice after this stays conditional on purpose — no enumeration.
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    // The middleware (proxy.ts) exchanges the ?code= the link carries on
+    // any page, so the recovery session lands straight on the reset form.
+    // The URL has to be in Supabase's Redirect URLs allowlist, like
+    // /auth/callback already is.
+    redirectTo: `${await requestOrigin()}/auth/reset`,
+  });
+  if (error) {
+    redirect(
+      `/auth/login?error=reset-failed&message=${encodeURIComponent(
+        error.message
+      )}`
+    );
+  }
+
+  redirect("/auth/login?reset-sent");
+}
+
+export async function updatePassword(formData: FormData) {
+  if (!emailSigninOpen()) {
+    redirect("/auth/login?closed");
+  }
+
+  const password = String(formData.get("password") ?? "");
+  if (password.length < 6) {
+    redirect("/auth/reset?error=invalid");
+  }
+
+  // Only reachable through the recovery link's session (proxy.ts exchanged
+  // the code); a stale or already-used link has no session and bounces to
+  // the login page.
+  const { supabase } = await requireUser();
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    redirect(
+      `/auth/reset?error=reset-failed&message=${encodeURIComponent(
+        error.message
+      )}`
+    );
+  }
+
+  // End the recovery session with the password updated: the next login must
+  // use the new password, and that is exactly what the login page says.
+  await supabase.auth.signOut();
+  revalidatePath("/", "layout");
+  redirect("/auth/login?reset-done");
 }
