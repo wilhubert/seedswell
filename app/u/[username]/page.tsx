@@ -138,7 +138,7 @@ export default async function ProfilePage({
               user's own row only. */}
           {!isSelf && profile.xHandle && (
             <a
-              className="btn btn--x"
+              className="btn"
               href={`https://x.com/${profile.xHandle}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -155,7 +155,7 @@ export default async function ProfilePage({
               "https://avatars.githubusercontent.com/",
             ) && (
             <a
-              className="btn btn--github"
+              className="btn"
               href={`https://github.com/${profile.username}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -166,11 +166,11 @@ export default async function ProfilePage({
           )}
           {isSelf && (
             <>
-              <Link className="btn btn--chip" href="/watching">
+              <Link className="btn" href="/watching">
                 watching
               </Link>
               <details className="profile-card__edit">
-                <summary className="btn btn--chip">edit profile</summary>
+                <summary className="btn">edit profile</summary>
               </details>
               {/* The form is a sibling of the details, not a child:
                   non-summary content of a <details> renders inside the

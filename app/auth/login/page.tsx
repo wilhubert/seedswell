@@ -148,7 +148,7 @@ export default async function LoginPage({
       <p className="auth__divider">or</p>
       <form action={continueWithGitHub}>
         <input type="hidden" name="next" value={next} />
-        <button className="btn btn--github auth__submit" type="submit">
+        <button className="btn btn--secondary auth__submit" type="submit">
           <GitHubMark />
           Continue with GitHub
         </button>

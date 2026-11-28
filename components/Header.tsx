@@ -46,13 +46,13 @@ export default async function Header() {
             </Link>
           </span>
           <form action="/auth/logout" method="post">
-            <button className="btn btn--header" type="submit">
+            <button className="btn btn--secondary" type="submit">
               log out
             </button>
           </form>
         </div>
       ) : (
-        <a className="btn btn--header" href="/auth/login">
+        <a className="btn btn--secondary" href="/auth/login">
           login
         </a>
       )}

@@ -45,13 +45,26 @@ a {
   background: #ffffff;
   color: #000;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 26px;
+  justify-content: center;
 }
 
 .btn:hover {
   background: #c5cbcf;
-  color: #000000;
+}
+
+.btn--secondary {
+  position: relative;
+  background: var(--bg);
+  border: 0.5px solid var(--line);
+  color: var(--ink);
+}
+
+.btn--secondary:hover {
+  background: var(--card);
+  color: var(--ink);
+  border: 0.5px solid var(--ink);
 }
 
 .site-header {
@@ -473,16 +486,6 @@ a {
 
 .seed-row .btn--watch .btn__watch-action {
   display: none;
-}
-
-.btn--header {
-  border: 0.5px solid var(--line);
-  border-radius: 5px;
-  background: var(--card);
-  color: #fff;
-  font-size: 14px;
-  line-height: 19px;
-  padding: 0 21px;
 }
 
 .btn--watch {

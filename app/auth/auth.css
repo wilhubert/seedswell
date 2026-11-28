@@ -87,26 +87,9 @@
 
 .auth__submit {
   width: 100%;
-  justify-content: center;
-  font-size: 14px;
-  line-height: 18px;
 }
 
-/* Dark-bordered GitHub button; the mark pins to the left edge, the
-   label centers across the full width. */
-.btn--github {
-  position: relative;
-  background: var(--bg);
-  border: 1px solid var(--line);
-  color: var(--ink);
-}
-
-.btn--github:hover {
-  background: var(--card);
-  color: var(--ink);
-}
-
-.btn--github svg {
+.btn--secondary svg {
   position: absolute;
   left: 14px;
   top: 50%;

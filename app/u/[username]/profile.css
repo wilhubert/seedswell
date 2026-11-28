@@ -63,31 +63,14 @@
   gap: 30px;
 }
 
-.btn--chip {
-  height: 37px;
-  padding: 0 12px;
-  border: 0.5px solid #ffffff;
-  border-radius: 5px;
-  line-height: 26px;
-  background: #2b2b2b;
-  color: #ffffff;
-  font-weight: 400;
-  font-size: 16px;
-}
-
-.btn--chip:hover {
-  background: #393838;
-  color: #ffffff;
-}
-
 .profile-card__error {
   color: var(--danger);
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .profile-card__saved {
   color: var(--muted);
-  font-size: 16px;
+  font-size: 14px;
 }
 
 /* Owner-only editor. display:contents flattens only the summary into
@@ -375,13 +358,5 @@
 
   .profile-card__name {
     font-size: 25px;
-  }
-
-  .btn--x,
-  .btn--github,
-  .btn--chip {
-    height: 30px;
-    padding: 0 10px;
-    font-size: 14px;
   }
 }
