@@ -24,25 +24,60 @@
   line-height: 1.4;
 }
 
+/* Field rhythm from the design: 3px label-to-input, 13px between
+   fields and down to the submit button. */
 .auth__form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
+/* Wrapping labels (resend form, register) keep the same 3px rhythm. */
 .auth__form label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-weight: 700;
+  gap: 3px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.auth__field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* "Forgot?" sits on the Password label row, right-aligned to the input's
+   edge — still a submit button for the reset request, styled as text. */
+.auth__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
   font-size: 14px;
 }
 
+.auth__forgot {
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.auth__forgot:hover {
+  color: var(--ink);
+}
+
 .auth__form input {
-  height: 46px;
-  border-radius: 10px;
-  border: 0.5px solid var(--line);
-  background: var(--card);
+  height: 37px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  background: var(--bg);
   color: var(--ink);
   padding: 0 14px;
   font-family: inherit;
@@ -50,21 +85,32 @@
   font-size: 16px;
 }
 
-.auth__actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.auth__submit {
+  width: 100%;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 18px;
 }
 
-.auth__actions .btn--quiet {
-  background: transparent;
-  border: 0.5px solid var(--line);
-  color: var(--muted);
+/* Dark-bordered GitHub button; the mark pins to the left edge, the
+   label centers across the full width. */
+.btn--github {
+  position: relative;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--ink);
 }
 
-.auth__actions .btn--quiet:hover {
+.btn--github:hover {
   background: var(--card);
   color: var(--ink);
+}
+
+.btn--github svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .auth__divider {
@@ -72,8 +118,9 @@
   align-items: center;
   gap: 14px;
   color: var(--muted);
-  font-size: 13px;
-  margin: 22px 0;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 20px 0;
 }
 
 .auth__divider::before,
@@ -81,7 +128,25 @@
   content: "";
   flex: 1;
   height: 0.5px;
-  background: var(--line);
+  background: var(--muted);
+}
+
+/* Login page's register pointer: centered, muted, per the design. */
+.auth__signup {
+  padding-top: 14px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.auth__signup a {
+  color: var(--blue);
+  font-weight: 500;
+}
+
+.auth__signup a:hover {
+  color: var(--ink);
 }
 
 .auth__alt {
