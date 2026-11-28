@@ -38,11 +38,17 @@ export default async function ResetPasswordPage({
         afterwards — the next log in uses the new password.
       </p>
       <form action={updatePassword} className="auth__form">
-        <label>
-          New password
-          <input name="password" type="password" minLength={6} required />
-        </label>
-        <button className="btn" type="submit">
+        <div className="auth__field">
+          <label htmlFor="reset-password">New password</label>
+          <input
+            id="reset-password"
+            name="password"
+            type="password"
+            minLength={6}
+            required
+          />
+        </div>
+        <button className="btn auth__submit" type="submit">
           Update password
         </button>
       </form>
