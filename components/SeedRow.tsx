@@ -33,7 +33,7 @@ type SeedRowProps = {
 function statusPill(
   status: SeedStatus,
   shipUrl: string | null | undefined,
-  slot: "mobile" | "desktop"
+  slot: "mobile" | "desktop",
 ) {
   const className = `seed-row__visit seed-row__visit--${slot} seed-row__visit--${status}`;
 
@@ -44,7 +44,15 @@ function statusPill(
     const contents = (
       <>
         {label}
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
           <path d="M15 3h6v6" />
           <path d="M10 14 21 3" />
           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -74,10 +82,23 @@ function statusPill(
 // button all fall out of those. The status pill is still rendered
 // twice in the markup (own slot on desktop, beside the name on
 // mobile) and CSS picks one per breakpoint.
-export default function SeedRow({ seed, variant = "board", watch }: SeedRowProps) {
+export default function SeedRow({
+  seed,
+  variant = "board",
+  watch,
+}: SeedRowProps) {
   const status = seedStatus(seed);
   const counter = counterLabel(seed);
   const stack = counterStack(seed);
+  // Hover tooltip: the stack's numbers alone don't say what they mean,
+  // so the title spells it out per state — a built seed's frozen
+  // headroom reads differently from a live countdown.
+  const stackTitle =
+    status === "delayed"
+      ? "Shipped past its deadline"
+      : status === "dropped"
+        ? "Deadline abandoned"
+        : "Time left till deadline";
   // The stack's numbers keep the coral highlight only while the seed is
   // still building: an on-time ship turns them green, a late ship or a
   // missed date fades them to muted.
@@ -96,15 +117,19 @@ export default function SeedRow({ seed, variant = "board", watch }: SeedRowProps
     // status pill is rendered twice (own slot on desktop, beside the
     // name on mobile) and CSS picks one per breakpoint.
     <div className={`seed-row${variant === "card" ? " seed-row--card" : ""}`}>
-      <span className={`seed-row__counter-stack${tone}`}>
+      {/* The state text rides in data-tip — globals.css renders it as a
+          styled bubble on hover (the native title tooltip can't be
+          styled). */}
+      <span className={`seed-row__counter-stack${tone}`} data-tip={stackTitle}>
         <span className="seed-row__counter-label" aria-hidden="true">
           {counter}
         </span>
-        {/* Two stacked rows ("01 D" over "24 H"): what the numbers mean
-            depends on the seed's state — time to go while building, time
-            it took once shipped, 00/00 for a missed date — and the muted
-            letters sit on the number's baseline. The aria-hidden label
-            above carries the full day X/30 · N to go reading. */}
+        {/* Two stacked rows ("01 D" over "24 H"): the time remaining to
+            the seed's called date — ticking while building, frozen at
+            ship for a built seed, 00/00 for a late ship or a missed
+            date — and the muted letters sit on the number's baseline.
+            The aria-hidden label above carries the full day X/30 · N to
+            go reading. */}
         <span className="seed-row__time">
           <span className="seed-row__time-num">{stack.days}</span>
           <span className="seed-row__time-unit">D</span>

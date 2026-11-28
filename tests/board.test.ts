@@ -4,6 +4,7 @@ import {
   boardOrder,
   counterLabel,
   counterStack,
+  profileOrder,
   seedStatus,
   type Seed,
 } from "../lib/board.ts";
@@ -70,23 +71,44 @@ test("stack reads 00/00 once the date passes without shipping", () => {
   assert.deepEqual(counterStack(seed), { days: "00", hours: "00" });
 });
 
-test("stack reads the elapsed days and hours at ship time", () => {
+test("stack freezes the remaining time at an on-time ship", () => {
   const seed = makeSeed({
     plantedAt: new Date(Date.now() - 6.5 * DAY_MS),
-    shippedAt: new Date(Date.now() - 0.5 * DAY_MS),
+    targetDays: 30,
+    shippedAt: new Date(Date.now() - 0.25 * DAY_MS),
     shipDays: 7,
   });
-  assert.deepEqual(counterStack(seed), { days: "06", hours: "00" });
+  assert.deepEqual(counterStack(seed), { days: "23", hours: "18" });
 });
 
-test("stack counts a ship inside the final hour of a day as 24", () => {
+test("stack keeps nearly the full window for an immediate ship", () => {
+  const seed = makeSeed({
+    plantedAt: new Date(Date.now() - 3_600_000),
+    targetDays: 1,
+    shippedAt: new Date(),
+    shipDays: 1,
+  });
+  assert.deepEqual(counterStack(seed), { days: "00", hours: "23" });
+});
+
+test("stack reads the headroom when a ship lands mid-window", () => {
+  const seed = makeSeed({
+    plantedAt: new Date(Date.now() - 17.5 * DAY_MS),
+    targetDays: 20,
+    shippedAt: new Date(),
+    shipDays: 18,
+  });
+  assert.deepEqual(counterStack(seed), { days: "02", hours: "12" });
+});
+
+test("stack reads 00/00 for a ship past the called date", () => {
   const seed = makeSeed({
     plantedAt: new Date(Date.now() - DAY_MS - 3 * 3_600_000),
-    targetDays: 30,
+    targetDays: 1,
     shippedAt: new Date(),
     shipDays: 2,
   });
-  assert.deepEqual(counterStack(seed), { days: "01", hours: "03" });
+  assert.deepEqual(counterStack(seed), { days: "00", hours: "00" });
 });
 
 test("status reads building while the date is ahead", () => {
@@ -174,4 +196,53 @@ test("board keeps a shipped seed under the live ones until its date", () => {
     "live",
     "shipped",
   ]);
+});
+
+test("profile keeps a seed that never shipped after its date", () => {
+  const overdue = makeSeed({
+    id: "overdue",
+    plantedAt: new Date(Date.now() - 35 * DAY_MS),
+  });
+  const live = makeSeed({ id: "live" });
+  assert.deepEqual(profileOrder([overdue, live]).map((s) => s.id), [
+    "live",
+    "overdue",
+  ]);
+});
+
+test("profile keeps a seed shipped after its date", () => {
+  const shippedLate = makeSeed({
+    id: "shipped-late",
+    plantedAt: new Date(Date.now() - 35 * DAY_MS),
+    shippedAt: new Date(Date.now() - 4 * DAY_MS),
+    shipDays: 31,
+  });
+  const live = makeSeed({ id: "live" });
+  assert.deepEqual(profileOrder([shippedLate, live]).map((s) => s.id), [
+    "live",
+    "shipped-late",
+  ]);
+});
+
+test("profile lists dropped seeds last, most recently expired first", () => {
+  const live = makeSeed({ id: "live" });
+  const shipped = makeSeed({
+    id: "shipped",
+    plantedAt: new Date(Date.now() - 2 * DAY_MS),
+    targetDays: 7,
+    shippedAt: new Date(Date.now() - DAY_MS),
+    shipDays: 2,
+  });
+  const olderDrop = makeSeed({
+    id: "older-drop",
+    plantedAt: new Date(Date.now() - 40 * DAY_MS),
+  });
+  const newerDrop = makeSeed({
+    id: "newer-drop",
+    plantedAt: new Date(Date.now() - 35 * DAY_MS),
+  });
+  assert.deepEqual(
+    profileOrder([newerDrop, olderDrop, shipped, live]).map((s) => s.id),
+    ["live", "shipped", "newer-drop", "older-drop"],
+  );
 });

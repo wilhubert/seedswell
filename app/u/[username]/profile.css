@@ -236,7 +236,7 @@
 .seeds-col {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 }
 
 .seeds-col__head {

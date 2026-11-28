@@ -205,6 +205,44 @@ a {
   gap: 1.9px;
   font-family: "Red Hat Mono", ui-monospace, monospace;
   letter-spacing: -0.03em;
+  /* The stack's state text rides in data-tip; the help cursor flags
+     it as hoverable. */
+  cursor: help;
+  position: relative;
+}
+
+/* The hover bubble: a native title tooltip can't be styled, so the
+   text renders from data-tip as an absolutely positioned card above
+   the numbers. pointer-events keeps it from blocking the row's
+   links; visibility gates the fade so it never catches a stray
+   hover on its own footprint. */
+.seed-row__counter-stack::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  z-index: 20;
+  padding: 5px 9px;
+  background: var(--card);
+  border: 0.5px solid var(--line);
+  border-radius: 5px;
+  font-family: "Rethink Sans", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: normal;
+  line-height: 16px;
+  color: var(--bg);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+  background-color: var(--muted);
+}
+
+.seed-row__counter-stack:hover::after {
+  opacity: 1;
+  visibility: visible;
 }
 
 .seed-row__time {

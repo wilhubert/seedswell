@@ -57,30 +57,23 @@ export function counterLabel(seed: Seed): string {
 }
 
 // Stacked readout for the row's time block, rendered in every state:
-// while building, the remaining time split into whole days ("01" over a
-// muted D) and the leftover hours ("24" over a muted H, never more than
-// a day's worth); once shipped, the time it took from planting to the
-// ship receipt; a seed that missed its date without shipping reads
-// 00/00. Zero-padded to hold the shape.
+// the time remaining to the seed's called date, split into whole days
+// ("01" over a muted D) and the leftover hours ("24" over a muted H,
+// never more than a day's worth). While building it ticks live; a ship
+// freezes it at the headroom the seed had when it landed — an
+// immediate ship of a 1-day seed keeps its 0d 23h; a seed past its
+// date, shipped or not, reads 00/00. Zero-padded to hold the shape.
 export type CounterStack = {
   days: string;
   hours: string;
 };
 
 export function counterStack(seed: Seed): CounterStack {
-  if (seed.shippedAt) {
-    const elapsedMs = Math.max(
-      seed.shippedAt.getTime() - seed.plantedAt.getTime(),
-      0
-    );
-    return {
-      days: String(Math.floor(elapsedMs / DAY_MS)).padStart(2, "0"),
-      // ceil keeps a ship inside the final hour showing 24 instead of 0.
-      hours: String(Math.ceil((elapsedMs % DAY_MS) / HOUR_MS)).padStart(2, "0"),
-    };
-  }
+  // A shipped seed's race is over: remaining time is measured to the
+  // ship moment, not to now — the stack shows the state at shipping.
+  const reference = seed.shippedAt ? seed.shippedAt.getTime() : Date.now();
   const remainingMs =
-    seed.plantedAt.getTime() + seed.targetDays * DAY_MS - Date.now();
+    seed.plantedAt.getTime() + seed.targetDays * DAY_MS - reference;
   if (remainingMs <= 0) {
     return { days: "00", hours: "00" };
   }
@@ -94,13 +87,17 @@ export function counterStack(seed: Seed): CounterStack {
   };
 }
 
+// A seed's called date: planting plus its target. Every ordering rule
+// keys off this moment.
+function deadline(seed: Seed): number {
+  return seed.plantedAt.getTime() + seed.targetDays * DAY_MS;
+}
+
 // Board rule: live seeds sort nearest their called date first; a seed
 // vanishes once its date passes, shipped or not; a shipped seed still inside
 // its window lingers under the live ones with its receipt.
 export function boardOrder(seeds: Seed[]): Seed[] {
   const now = Date.now();
-  const deadline = (seed: Seed) =>
-    seed.plantedAt.getTime() + seed.targetDays * DAY_MS;
 
   const visible = seeds.filter((seed) => deadline(seed) > now);
   const live = visible
@@ -111,4 +108,23 @@ export function boardOrder(seeds: Seed[]): Seed[] {
     .sort((a, b) => deadline(a) - deadline(b));
 
   return [...live, ...shipped];
+}
+
+// Profile rule: the board's vanish rule applies only to the board — a
+// profile keeps every seed its owner ever planted. Live seeds lead like
+// the board (nearest date first), shipped seeds follow; seeds that
+// missed their date without shipping trail at the end, most recently
+// expired first.
+export function profileOrder(seeds: Seed[]): Seed[] {
+  const live = seeds
+    .filter((seed) => !seed.shippedAt && deadline(seed) > Date.now())
+    .sort((a, b) => deadline(a) - deadline(b));
+  const shipped = seeds
+    .filter((seed) => seed.shippedAt)
+    .sort((a, b) => deadline(a) - deadline(b));
+  const dropped = seeds
+    .filter((seed) => !seed.shippedAt && deadline(seed) <= Date.now())
+    .sort((a, b) => deadline(b) - deadline(a));
+
+  return [...live, ...shipped, ...dropped];
 }

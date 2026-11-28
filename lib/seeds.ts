@@ -1,4 +1,4 @@
-import { boardOrder, type Seed } from "./board";
+import { boardOrder, profileOrder, type Seed } from "./board";
 import { getSupabase } from "./supabase";
 
 export type Commit = {
@@ -100,7 +100,9 @@ export async function getSeedsForUser(userId: string): Promise<Seed[]> {
     throw new Error(`User seeds query failed: ${error.message}`);
   }
 
-  return boardOrder(data.map(mapProfileAndSeed));
+  // The profile keeps every seed the owner ever planted — the board's
+  // vanish rule does not apply here.
+  return profileOrder(data.map(mapProfileAndSeed));
 }
 
 export async function isWatching(userId: string, seedId: string) {
